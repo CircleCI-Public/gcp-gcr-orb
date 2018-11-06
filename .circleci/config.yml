@@ -1,0 +1,53 @@
+# CircleCI build config to test the 
+# Google Coud Platform Container Registry Orb published by CircleCI
+
+version: 2.1
+
+orbs:
+  gcp-gcr: ttrahan/gcp-gcr@dev:alpha
+
+jobs:
+  test-orb-commands:
+    executor: gcp-gcr/default
+    steps:
+      # test orb commands
+      - checkout
+      - gcp-gcr/gcr-auth:
+          google-project-id: citric-biplane-94023
+          google-compute-zone: us-west1-b
+      - gcp-gcr/build-image:
+          registry-url: us.gcr.io
+          google-project-id: citric-biplane-94023
+          image: sample-image
+          tag: $CIRCLE_BRANCH.$CIRCLE_BUILD_NUMBER
+          path-to-dockerfile: .
+      - gcp-gcr/push-image:
+          registry-url: us.gcr.io
+          google-project-id: citric-biplane-94023
+          image: sample-image
+          tag: $CIRCLE_BRANCH.$CIRCLE_BUILD_NUMBER
+
+workflows:
+  build_and_push_image:
+    jobs:
+      # test orb commands
+      - test-orb-commands:
+          context: ttrahan
+
+      # test orb jobs
+      - gcp-gcr/build_and_push_image:
+          requires:
+            - test-orb-commands
+          context: ttrahan
+          google-project-id: citric-biplane-94023
+          google-compute-zone: us-west1-b
+          registry-url: us.gcr.io
+          image: sample-image
+          tag: $CIRCLE_BRANCH.$CIRCLE_BUILD_NUM
+
+      # test orb jobs with default values only
+      - gcp-gcr/build_and_push_image:
+          requires:
+            - gcp-gcr/build_and_push_image
+          context: ttrahan
+          image: sample-image
