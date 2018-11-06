@@ -19,7 +19,7 @@ description: >
     * GOOGLE_COMPUTE_ZONE
 
   The source repo for this Orb can be found here:
-  https://github.com/CircleCI-Public/circleci-orbs/tree/master/src/gcp-gcr
+  https://github.com/CircleCI-Public/circleci-orbs/gcp-gcr-orb
 
 examples:
   simple_build_and_push:
