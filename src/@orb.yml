@@ -24,7 +24,7 @@ examples:
                 tag: latest
 
 orbs:
-  gcp-cli: circleci/gcp-cli@1.0.1
+  gcp-cli: circleci/gcp-cli@1.0.2
 
 executors:
   default:
