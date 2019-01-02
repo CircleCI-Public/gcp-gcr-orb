@@ -55,13 +55,13 @@ commands:
           google-project-id: <<parameters.google-project-id>>
           google-compute-zone: <<parameters.google-compute-zone>>
       - run:
-          name: gcloud auth configure-docker
+          name: gcloud alpha auth configure-docker
           command: |
             # Set sudo to work whether logged in as root user or non-root user
             if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
 
             # configure Docker to use gcloud as a credential helper
-            $SUDO gcloud auth configure-docker --quiet --project <<parameters.google-project-id>>
+            $SUDO gcloud alpha auth configure-docker --quiet --project <<parameters.google-project-id>>
 
             # if applicable, provide circleci user access to the docker config file
             if [[ -d /home/circleci/.docker ]]; then
