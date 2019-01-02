@@ -61,7 +61,7 @@ commands:
             if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
 
             # configure Docker to use gcloud as a credential helper
-            $SUDO gcloud alpha auth configure-docker --quiet --project <<parameters.google-project-id>>
+            $SUDO gcloud alpha auth configure-docker --quiet --project $<<parameters.google-project-id>>
 
             # if applicable, provide circleci user access to the docker config file
             if [[ -d /home/circleci/.docker ]]; then
@@ -96,7 +96,7 @@ commands:
     steps:
       - run:
           name: Build docker image
-          command: docker build -t <<parameters.registry-url>>/<<parameters.google-project-id>>/<<parameters.image>>:<<parameters.tag>> <<parameters.path-to-dockerfile>>
+          command: docker build -t <<parameters.registry-url>>/$<<parameters.google-project-id>>/<<parameters.image>>:<<parameters.tag>> <<parameters.path-to-dockerfile>>
   push-image:
     description: "Push a container image to the GCR registry"
     parameters:
@@ -119,7 +119,7 @@ commands:
       - run:
           name: Push image to GCR
           command: |
-            docker push <<parameters.registry-url>>/<<parameters.google-project-id>>/<<parameters.image>>:<<parameters.tag>>
+            docker push <<parameters.registry-url>>/$<<parameters.google-project-id>>/<<parameters.image>>:<<parameters.tag>>
 jobs:
   build_and_push_image:
     description: >
