@@ -1,12 +1,79 @@
-# CircleCI build config to test the 
-# Google Coud Platform Container Registry Orb published by CircleCI
+# CircleCI build config to test the Google Cloud Platform Container Registry Orb published by CircleCI
 
 version: 2.1
 
 orbs:
-  gcp-gcr: ttrahan/gcp-gcr@dev:alpha
+  gcp-gcr: circleci/gcp-gcr@dev:alpha
+
+executors:
+  cli:
+    resource_class: small
+    docker:
+      - image: circleci/circleci-cli
+  lint-condo:
+    resource_class: small
+    docker:
+      - image: singapore/lint-condo
+  node:
+    resource_class: small
+    docker:
+      - image: circleci/node
 
 jobs:
+  lint:
+    executor: lint-condo
+    steps:
+      - checkout
+      - run: yamllint .
+
+  validate:
+    executor: cli
+    steps:
+      - checkout
+      - run: circleci orb validate src/@orb.yml
+
+  publish-dev:
+    executor: cli
+    steps:
+      - checkout
+
+      - run:
+          name: publish dev versions
+          command: |
+            # for integration testing
+            circleci orb publish src/@orb.yml circleci/gcp-gcr@dev:alpha --token $CIRCLE_TOKEN
+
+            # for transparency
+            circleci orb publish src/@orb.yml circleci/gcp-gcr@dev:$CIRCLE_BRANCH-${CIRCLE_SHA1:0:7} --token $CIRCLE_TOKEN
+
+            # for potentially promoting to prod
+            circleci orb publish src/@orb.yml circleci/gcp-gcr@dev:${CIRCLE_SHA1:0:7} --token $CIRCLE_TOKEN
+
+  trigger-integration:
+    executor: node
+    parameters:
+      tag:
+        type: enum
+        default: "integration"
+        enum: ["integration", master]
+    steps:
+      - checkout
+
+      - add_ssh_keys:
+          fingerprints:
+            - "be:d5:b0:4f:41:21:6a:0b:77:19:c4:35:22:a5:1b:11"
+
+      - run:
+          name: git config
+          command: |
+            git config --global user.email "$CIRCLE_USERNAME@users.noreply.github.com"
+            git config --global user.name "$CIRCLE_USERNAME"
+
+      - run: |
+          INTEGRATION_TAG=<<parameters.tag>>-$CIRCLE_BRANCH-${CIRCLE_SHA1:0:7}
+          git tag $INTEGRATION_TAG
+          git push origin $INTEGRATION_TAG
+
   test-orb-commands:
     executor: gcp-gcr/default
     steps:
@@ -27,27 +94,129 @@ jobs:
           image: sample-image
           tag: $CIRCLE_BRANCH.$CIRCLE_BUILD_NUMBER
 
+  dev-promote-prod:
+    executor: cli
+    steps:
+      - checkout
+      - run: circleci orb publish promote circleci/gcp-gcr@dev:${CIRCLE_SHA1:0:7} patch --token $CIRCLE_TOKEN
+
 workflows:
-  build_and_push_image:
+  validate_unit-test_dev-deploy:
+    jobs:
+      - lint
+
+      - validate:
+          requires:
+            - lint
+
+      - publish-dev:
+          requires:
+            - validate
+          context: orb-publishing
+
+      - trigger-integration:
+          name: trigger-integration-dev
+          requires:
+            - publish-dev
+          filters:
+            branches:
+              ignore: master
+
+      - trigger-integration:
+          name: trigger-integration-master
+          tag: master
+          requires:
+            - publish-dev
+          filters:
+            branches:
+              only: master
+
+  integration_test-prod_deploy:
     jobs:
       # test orb commands
       - test-orb-commands:
-          context: ttrahan
+          name: test-orb-commands-dev
+          context: orb-publishing
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /integration-.*/
+
+      - test-orb-commands:
+          name: test-orb-commands-master
+          context: orb-publishing
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /master-.*/
 
       # test orb jobs
       - gcp-gcr/build_and_push_image:
+          name: build_and_push_image-dev
           requires:
-            - test-orb-commands
-          context: ttrahan
+            - test-orb-commands-dev
+          context: orb-publishing
           google-project-id: citric-biplane-94023
           google-compute-zone: us-west1-b
           registry-url: us.gcr.io
           image: sample-image
           tag: $CIRCLE_BRANCH.$CIRCLE_BUILD_NUM
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /integration-.*/
+
+      - gcp-gcr/build_and_push_image:
+          name: build_and_push_image-master
+          requires:
+            - test-orb-commands-master
+          context: orb-publishing
+          google-project-id: citric-biplane-94023
+          google-compute-zone: us-west1-b
+          registry-url: us.gcr.io
+          image: sample-image
+          tag: $CIRCLE_BRANCH.$CIRCLE_BUILD_NUM
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /master-.*/
 
       # test orb jobs with default values only
       - gcp-gcr/build_and_push_image:
+          name: build_push_defaults-dev
           requires:
-            - gcp-gcr/build_and_push_image
-          context: ttrahan
+            - test-orb-commands-dev
+          context: orb-publishing
           image: sample-image
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /integration-.*/
+
+      - gcp-gcr/build_and_push_image:
+          name: build_push_defaults-master
+          requires:
+            - test-orb-commands-master
+          context: orb-publishing
+          image: sample-image
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /master-.*/
+
+      - dev-promote-prod:
+          context: orb-publishing
+          requires:
+            - build_and_push_image-master
+            - build_push_defaults-master
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /master-.*/

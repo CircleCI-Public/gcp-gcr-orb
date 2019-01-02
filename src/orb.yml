@@ -3,24 +3,6 @@ version: 2.1
 description: >
   An orb for working with Google Container Registry (GCR)
 
-  The executors within this Orb provide run-time environments that contain the
-  necessary dependencies for executing the jobs and commands in this orb,
-  except for the following required dependencies that must be configured in
-  CircleCI in order to use this orb
-    * GCLOUD_SERVICE_KEY - environment variable for GCP login
-
-  See CircleCI documentation for instructions on storing environment variables
-  in either your Project settings or in a Context
-    * https://circleci.com/docs/2.0/env-vars
-
-  If set, the following optional environment variables will serve as default 
-  values
-    * GOOGLE_PROJECT_ID
-    * GOOGLE_COMPUTE_ZONE
-
-  The source repo for this Orb can be found here:
-  https://github.com/CircleCI-Public/circleci-orbs/gcp-gcr-orb
-
 examples:
   simple_build_and_push:
     description: Log into Google Cloud Plaform, build and push image to GCR
@@ -42,34 +24,31 @@ examples:
                 tag: latest
 
 orbs:
-  gcp-cli: ttrahan/gcp-cli@dev:beta
+  gcp-cli: circleci/gcp-cli@1.0.1
 
 executors:
   default:
-    description: A debian-based machine executor.  Note that there is an 
-                 overhead for provisioning a machine executor as a result of
-                 spinning up a private Docker server. Use of the machine key
-                 may require additional fees.
+    description: >
+      A debian-based machine executor.
     machine: true
 
 commands:
   gcr-auth:
-    description: Configure Docker to use gcloud as a credential helper. Note 
-                 that using this command requires the use of a 'machine' 
-                 executor.
+    description: >
+      Configure Docker to use gcloud as a credential helper. Using this command requires the use of a 'machine' executor.
     parameters:
       gcloud-service-key:
         description: The gcloud service key
-        type: string
-        default: $GCLOUD_SERVICE_KEY
+        type: env_var_name
+        default: GCLOUD_SERVICE_KEY
       google-project-id:
         description: The Google project ID to connect with via the gcloud CLI
-        type: string
-        default: $GOOGLE_PROJECT_ID
+        type: env_var_name
+        default: GOOGLE_PROJECT_ID
       google-compute-zone:
         description: The Google compute zone to connect with via the gcloud CLI
-        type: string
-        default: $GOOGLE_COMPUTE_ZONE
+        type: env_var_name
+        default: GOOGLE_COMPUTE_ZONE
     steps:
       - gcp-cli/install
       - gcp-cli/initialize:
@@ -101,8 +80,8 @@ commands:
         default: gcr.io
       google-project-id:
         description: The Google project ID to connect with via the gcloud CLI
-        type: string
-        default: $GOOGLE_PROJECT_ID
+        type: env_var_name
+        default: GOOGLE_PROJECT_ID
       image:
         description: A name for your docker image
         type: string
@@ -127,8 +106,8 @@ commands:
         default: gcr.io
       google-project-id:
         description: The Google project ID to connect with via the gcloud CLI
-        type: string
-        default: $GOOGLE_PROJECT_ID
+        type: env_var_name
+        default: GOOGLE_PROJECT_ID
       image:
         description: A name for your docker image
         type: string
@@ -143,24 +122,23 @@ commands:
             docker push <<parameters.registry-url>>/<<parameters.google-project-id>>/<<parameters.image>>:<<parameters.tag>>
 jobs:
   build_and_push_image:
-    description: Install GCP CLI, if needed, and configure. Build and push 
-                 image to repository. Requires environment variables
-                 for GCLOUD_SERVICE_KEY. We recommend these be saved in a 
-                 Project (https://circleci.com/docs/2.0/env-vars/#setting-an-environment-variable-in-a-project) or in Contexts (https://circleci.com/docs/2.0/contexts/).
+    description: >
+      Install GCP CLI, if needed, and configure. Build and push image to repository.
+      Requires environment variable for GCLOUD_SERVICE_KEY.
     executor: default
     parameters:
       gcloud-service-key:
         description: The gcloud service key
-        type: string
-        default: $GCLOUD_SERVICE_KEY
+        type: env_var_name
+        default: GCLOUD_SERVICE_KEY
       google-project-id:
         description: The Google project ID to connect with via the gcloud CLI
-        type: string
-        default: $GOOGLE_PROJECT_ID
+        type: env_var_name
+        default: GOOGLE_PROJECT_ID
       google-compute-zone:
         description: The Google compute zone to connect with via the gcloud CLI
-        type: string
-        default: $GOOGLE_COMPUTE_ZONE
+        type: env_var_name
+        default: GOOGLE_COMPUTE_ZONE
       registry-url:
         description: The GCR registry URL from ['', us, eu, asia].gcr.io
         type: string
