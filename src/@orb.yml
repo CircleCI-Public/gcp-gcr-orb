@@ -15,7 +15,7 @@ examples:
       workflows:
         build_and_push_image:
           jobs:
-            - gcp-gcr/build_and_push_image_using_remote_docker:
+            - gcp-gcr/build_and_push_image:
                 context: myContext # your context containing gcloud login variables
                 google-project-id: myGoogleProjectId
                 google-compute-zone: myGoogleComputeZone
