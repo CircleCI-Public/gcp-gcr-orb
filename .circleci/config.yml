@@ -202,6 +202,23 @@ workflows:
             tags:
               only: /master-.*/
 
+      - gcp-gcr/build_and_push_image:
+          name: build_push_all_params-master
+          requires:
+            - test-orb-commands-master
+          context: orb-publishing
+          image: sample-image
+          registry-url: us.gcr.io
+          tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUM
+          gcloud-service-key: NONDEFAULT_SERVICE_KEY
+          google-project-id: NONDEFAULT_GOOGLE_PROJECT_ID
+          google-compute-zone: NONDEFAULT_GOOGLE_COMPUTE_ZONE
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /master-.*/
+
       - dev-promote-prod:
           context: orb-publishing
           requires:
