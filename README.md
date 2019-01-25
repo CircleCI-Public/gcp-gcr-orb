@@ -1,4 +1,4 @@
-# gcp-gcr-orb
+# GCP GCR Orb ![CircleCI status](https://circleci.com/gh/CircleCI-Public/gcp-gcr-orb.svg "CircleCI status")
 Orb for interacting with Google Container Registry from within a CircleCI
 build job.
 
