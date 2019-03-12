@@ -158,7 +158,7 @@ jobs:
     steps:
       - checkout
       - gcr-auth:
-          gcloud-service-key: <<parameters.gcloud-service-ke>>
+          gcloud-service-key: <<parameters.gcloud-service-key>>
           google-project-id: <<parameters.google-project-id>>
           google-compute-zone: <<parameters.google-compute-zone>>
       - build-image:
