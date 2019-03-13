@@ -96,6 +96,12 @@ jobs:
       - checkout
       - run: circleci orb publish promote circleci/gcp-gcr@dev:${CIRCLE_SHA1:0:7} patch --token $CIRCLE_TOKEN
 
+add-ssh-keys: &add-ssh-keys
+  [add_ssh_keys: {fingerprints: ["be:d5:b0:4f:41:21:6a:0b:77:19:c4:35:22:a5:1b:11"]}]
+
+cleanup-git-tag: &cleanup-git-tag
+  [run: {when: "always", name: "cleanup tag", command: "git config --global user.email $CIRCLE_USERNAME@users.noreply.github.com && git config --global user.name $CIRCLE_USERNAME && git push --delete origin $CIRCLE_TAG"}]
+
 workflows:
   validate_unit-test_dev-deploy:
     jobs:
