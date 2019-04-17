@@ -138,7 +138,6 @@ workflows:
       # test orb commands
       - test-orb-commands:
           name: test-orb-commands-dev
-          context: orb-publishing
           filters:
             branches:
               ignore: /.*/
@@ -147,7 +146,6 @@ workflows:
 
       - test-orb-commands:
           name: test-orb-commands-master
-          context: orb-publishing
           filters:
             branches:
               ignore: /.*/
@@ -159,7 +157,6 @@ workflows:
           name: build_and_push_image-dev
           requires:
             - test-orb-commands-dev
-          context: orb-publishing
           registry-url: us.gcr.io
           image: sample-image
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUM
@@ -173,7 +170,6 @@ workflows:
           name: build_and_push_image-master
           requires:
             - test-orb-commands-master
-          context: orb-publishing
           registry-url: us.gcr.io
           image: sample-image
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUM
@@ -188,7 +184,6 @@ workflows:
           name: build_push_defaults-dev
           requires:
             - test-orb-commands-dev
-          context: orb-publishing
           image: sample-image
           filters:
             branches:
@@ -200,7 +195,6 @@ workflows:
           name: build_push_defaults-master
           requires:
             - test-orb-commands-master
-          context: orb-publishing
           image: sample-image
           filters:
             branches:
