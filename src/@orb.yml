@@ -11,7 +11,7 @@ examples:
       version: 2.1
 
       orbs:
-        gcp-gcr: circleci/gcp-gcr@1.0.0
+        gcp-gcr: circleci/gcp-gcr@x.y.z
 
       workflows:
         build_and_push_image:
@@ -52,9 +52,12 @@ commands:
         default: GOOGLE_COMPUTE_ZONE
     steps:
       - gcp-cli/install
+      
       - gcp-cli/initialize:
           google-project-id: <<parameters.google-project-id>>
           google-compute-zone: <<parameters.google-compute-zone>>
+          gcloud-service-key: <<parameters.gcloud-service-key>>
+          
       - run:
           name: gcloud alpha auth configure-docker
           command: |
