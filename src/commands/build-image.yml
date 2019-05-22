@@ -2,30 +2,33 @@ description: Build a Docker image
 
 parameters:
   registry-url:
-    description: The GCR registry URL from ['', us, eu, asia].gcr.io
     type: string
     default: gcr.io
+    description: The GCR registry URL from ['', us, eu, asia].gcr.io
 
   google-project-id:
-    description: The Google project ID to connect with via the gcloud CLI
     type: env_var_name
     default: GOOGLE_PROJECT_ID
+    description: The Google project ID to connect with via the gcloud CLI
 
   image:
-    description: A name for your docker image
     type: string
+    description: A name for your Docker image
 
   tag:
-    description: A docker image tag
     type: string
-    default: "latest"
+    default: latest
+    description: A Docker image tag
 
   path-to-dockerfile:
-    description: The relative path to the Dockerfile to use when building image
     type: string
     default: "."
+    description: The relative path to the Dockerfile to use when building image
 
 steps:
   - run:
       name: Build docker image
-      command: docker build -t <<parameters.registry-url>>/$<<parameters.google-project-id>>/<<parameters.image>>:<<parameters.tag>> <<parameters.path-to-dockerfile>>
+      command: |
+        docker build -t \
+          <<parameters.registry-url>>/$<<parameters.google-project-id>>/<<parameters.image>>:<<parameters.tag>> \
+          <<parameters.path-to-dockerfile>>
