@@ -40,8 +40,8 @@ integration-master_filters: &integration-master_filters
 
 prod-deploy_requires: &prod-deploy_requires
   [
-    build_and_push_image-master,
-    build_push_defaults-master
+    build-and-push-image-master,
+    build-push-defaults-master
   ]
 
 workflows:
@@ -90,8 +90,8 @@ workflows:
           filters: *integration-dev_filters
 
       # test orb jobs
-      - gcp-gcr/build_and_push_image:
-          name: build_and_push_image-dev
+      - gcp-gcr/build-and-push-image:
+          name: build-and-push-image-dev
           requires:
             - test-orb-commands-dev
           registry-url: us.gcr.io
@@ -100,8 +100,8 @@ workflows:
           filters: *integration-dev_filters
 
       # test orb jobs with default values only
-      - gcp-gcr/build_and_push_image:
-          name: build_push_defaults-dev
+      - gcp-gcr/build-and-push-image:
+          name: build-push-defaults-dev
           requires:
             - test-orb-commands-dev
           image: sample-image
@@ -114,8 +114,8 @@ workflows:
           filters: *integration-master_filters
 
       # test orb jobs
-      - gcp-gcr/build_and_push_image:
-          name: build_and_push_image-master
+      - gcp-gcr/build-and-push-image:
+          name: build-and-push-image-master
           requires:
             - test-orb-commands-master
           registry-url: us.gcr.io
@@ -124,8 +124,8 @@ workflows:
           filters: *integration-master_filters
 
       # test orb jobs with default values only
-      - gcp-gcr/build_and_push_image:
-          name: build_push_defaults-master
+      - gcp-gcr/build-and-push-image:
+          name: build-push-defaults-master
           requires:
             - test-orb-commands-master
           image: sample-image
