@@ -1,0 +1,47 @@
+description: >
+  Configure Docker to use gcloud as a credential helper. Using this command requires the use of a 'machine' executor.
+
+parameters:
+  gcloud-service-key:
+    type: env_var_name
+    default: GCLOUD_SERVICE_KEY
+    description: The gcloud service key
+
+  google-project-id:
+    type: env_var_name
+    default: GOOGLE_PROJECT_ID
+    description: >
+      Environment variable name for the Google project ID to connect with
+      via the gcloud CLI
+
+  google-compute-zone:
+    type: env_var_name
+    default: GOOGLE_COMPUTE_ZONE
+    description: >
+      The Google compute zone to connect with via the gcloud CLI
+
+steps:
+  - gcp-cli/install
+
+  - gcp-cli/initialize:
+      google-project-id: <<parameters.google-project-id>>
+      google-compute-zone: <<parameters.google-compute-zone>>
+      gcloud-service-key: <<parameters.gcloud-service-key>>
+
+  - run:
+      name: gcloud alpha auth configure-docker
+      command: |
+        # Set sudo to work whether logged in as root user or non-root user
+        if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
+
+        # configure Docker to use gcloud as a credential helper
+        mkdir -p /home/circleci/.docker
+        $SUDO gcloud alpha auth configure-docker --quiet --project $<<parameters.google-project-id>>
+
+        # if applicable, provide circleci user access to the docker config file
+        if [[ -d /home/circleci/.docker ]]; then
+          $SUDO chown circleci:circleci /home/circleci/.docker -R
+        fi
+        if [[ -d /home/circleci/.config ]]; then
+          $SUDO chown circleci:circleci /home/circleci/.config -R
+        fi

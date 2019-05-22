@@ -1,0 +1,3 @@
+description: A debian-based machine executor
+
+machine: true
