@@ -1,0 +1,59 @@
+description: >
+  Install GCP CLI, if needed, and configure. Build and push image to repository.
+
+executor: default
+
+parameters:
+  gcloud-service-key:
+    description: The gcloud service key
+    type: env_var_name
+    default: GCLOUD_SERVICE_KEY
+
+  google-project-id:
+    description: The Google project ID to connect with via the gcloud CLI
+    type: env_var_name
+    default: GOOGLE_PROJECT_ID
+
+  google-compute-zone:
+    description: The Google compute zone to connect with via the gcloud CLI
+    type: env_var_name
+    default: GOOGLE_COMPUTE_ZONE
+
+  registry-url:
+    description: The GCR registry URL from ['', us, eu, asia].gcr.io
+    type: string
+    default: gcr.io
+
+  image:
+    description: A name for your docker image
+    type: string
+
+  tag:
+    description: A docker image tag
+    type: string
+    default: "latest"
+
+  path-to-dockerfile:
+    description: The relative path to the Dockerfile to use when building image
+    type: string
+    default: "."
+
+steps:
+  - checkout
+
+  - gcr-auth:
+      google-project-id: <<parameters.google-project-id>>
+      google-compute-zone: <<parameters.google-compute-zone>>
+
+  - build-image:
+      registry-url: <<parameters.registry-url>>
+      google-project-id: <<parameters.google-project-id>>
+      image: <<parameters.image>>
+      tag: << parameters.tag >>
+      path-to-dockerfile: <<parameters.path-to-dockerfile>>
+
+  - push-image:
+      registry-url: <<parameters.registry-url>>
+      google-project-id: <<parameters.google-project-id>>
+      image: <<parameters.image>>
+      tag: <<parameters.tag>>

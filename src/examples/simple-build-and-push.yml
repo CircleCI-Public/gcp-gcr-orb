@@ -1,0 +1,19 @@
+description: >
+  Log into Google Cloud Plaform, then build and push image to GCR
+
+usage:
+  version: 2.1
+
+  orbs:
+    gcp-gcr: circleci/gcp-gcr@x.y.z
+
+  workflows:
+    build_and_push_image:
+      jobs:
+        - gcp-gcr/build_and_push_image:
+            context: myContext # your context containing gcloud login variables
+            google-project-id: myGoogleProjectId
+            google-compute-zone: myGoogleComputeZone
+            registry-url: us.gcr.io # gcr.io, eu.gcr.io, asia.gcr.io
+            image: my-image # your image name
+            tag: latest
