@@ -44,6 +44,7 @@ steps:
   - gcr-auth:
       google-project-id: <<parameters.google-project-id>>
       google-compute-zone: <<parameters.google-compute-zone>>
+      gcloud-service-key: <<parameters.gcloud-service-key>>
 
   - build-image:
       registry-url: <<parameters.registry-url>>
