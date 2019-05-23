@@ -36,7 +36,7 @@ steps:
 
         # configure Docker to use gcloud as a credential helper
         mkdir -p /home/circleci/.docker
-        $SUDO gcloud alpha auth configure-docker --quiet --project $<<parameters.google-project-id>>
+        $SUDO gcloud auth configure-docker --quiet --project $<<parameters.google-project-id>>
 
         # if applicable, provide circleci user access to the docker config file
         if [[ -d /home/circleci/.docker ]]; then
