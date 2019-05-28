@@ -35,13 +35,13 @@ steps:
         if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
 
         # configure Docker to use gcloud as a credential helper
-        mkdir -p /home/circleci/.docker
+        mkdir -p "$HOME/.docker"
         gcloud auth configure-docker --quiet --project $<<parameters.google-project-id>>
 
-        # if applicable, provide circleci user access to the docker config file
-        if [[ -d /home/circleci/.docker ]]; then
-          $SUDO chown circleci:circleci /home/circleci/.docker -R
+        # if applicable, provide user access to the docker config file
+        if [[ -d "$HOME/.docker" ]]; then
+          $SUDO chown "$USER:$USER" "$HOME/.docker" -R
         fi
-        if [[ -d /home/circleci/.config ]]; then
-          $SUDO chown circleci:circleci /home/circleci/.config -R
+        if [[ -d "$HOME/.config" ]]; then
+          $SUDO chown "$USER:$USER" "$HOME/.config" -R
         fi
