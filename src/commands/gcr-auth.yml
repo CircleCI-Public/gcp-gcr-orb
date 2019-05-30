@@ -29,19 +29,6 @@ steps:
       gcloud-service-key: <<parameters.gcloud-service-key>>
 
   - run:
-      name: gcloud auth configure-docker
+      name: Register gcloud as a Docker credential helper
       command: |
-        # Set sudo to work whether logged in as root user or non-root user
-        if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
-
-        # configure Docker to use gcloud as a credential helper
-        mkdir -p "$HOME/.docker"
         gcloud auth configure-docker --quiet --project $<<parameters.google-project-id>>
-
-        # if applicable, provide user access to the docker config file
-        if [[ -d "$HOME/.docker" ]]; then
-          $SUDO chown "$USER:$USER" "$HOME/.docker" -R
-        fi
-        if [[ -d "$HOME/.config" ]]; then
-          $SUDO chown "$USER:$USER" "$HOME/.config" -R
-        fi
