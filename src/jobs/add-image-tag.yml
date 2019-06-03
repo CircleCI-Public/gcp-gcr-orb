@@ -29,13 +29,15 @@ parameters:
     type: string
 
   source-tag:
-    description: An existing Docker image tag
     type: string
-    default: latest
+    default: ""
+    description: >
+      An existing Docker image tag. If left blank, the most recently
+      pushed image will be tagged with the value of `target-tag`.
 
   target-tag:
-    description: A new Docker image tag
     type: string
+    description: A new Docker image tag
 
 steps:
 
