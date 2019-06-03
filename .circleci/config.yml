@@ -62,7 +62,7 @@ workflows:
       - orb-tools/lint
 
       - orb-tools/pack:
-          requires: {orb-tools/lint}
+          requires: [orb-tools/lint]
 
       - orb-tools/publish-dev:
           orb-name: circleci/gcp-gcr
