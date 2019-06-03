@@ -4,7 +4,7 @@ version: 2.1
 
 orbs:
   gcp-gcr: circleci/gcp-gcr@dev:alpha
-  orb-tools: circleci/orb-tools@8.9.2
+  orb-tools: circleci/orb-tools@8.14.0
 
 jobs:
   test-orb-commands:
