@@ -1,0 +1,32 @@
+description: Push a container image to the GCR registry
+
+parameters:
+  registry-url:
+    description: 'The GCR registry URL from ['''', us, eu, asia].gcr.io'
+    type: string
+    default: gcr.io
+
+  google-project-id:
+    description: The Google project ID to connect with via the gcloud CLI
+    type: env_var_name
+    default: GOOGLE_PROJECT_ID
+
+  image: 
+    description: A docker image name
+    type: string
+
+  source-tag:
+    description: An existing docker image tag
+    type: string
+
+  target-tag:
+    description: A new docker image tag
+    type: string
+
+steps:
+  - run:
+      name: Add <<parameters.target-tag>> tag to <<parameters.registry-url>>/$<<parameters.google-project-id>>/<<parameters.image>>:<<parameters.source-tag>>
+      command: |
+        IMAGE_ROOT=<<parameters.registry-url>>/$<<parameters.google-project-id>>/<<parameters.image>>
+        gcloud container images add-tag --quiet "${IMAGE_ROOT}:<<parameters.source-tag>>" "${IMAGE_ROOT}:<<parameters.target-tag>>"
+        
