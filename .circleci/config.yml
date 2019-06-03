@@ -142,6 +142,7 @@ workflows:
           context: orb-publishing
           registry-url: us.gcr.io
           image: sample-image
+          source-tag: "$(cat TAG)"
           target-tag: testing-master
           filters: *integration-master_filters
           requires: [build-and-push-image-master]
