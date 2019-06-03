@@ -25,15 +25,16 @@ parameters:
     default: gcr.io
 
   image:
-    description: A name for your docker image
+    description: A name for your Docker image
     type: string
 
   source-tag:
-    description: An existing docker image tag
+    description: An existing Docker image tag
     type: string
+    default: latest
 
   target-tag:
-    description: A new docker image tag
+    description: A new Docker image tag
     type: string
 
 steps:
@@ -48,4 +49,4 @@ steps:
       google-project-id: <<parameters.google-project-id>>
       image: <<parameters.image>>
       source-tag: <<parameters.source-tag>>
-      target-tag: <<parametrs.target-tag>>
+      target-tag: <<parameters.target-tag>>

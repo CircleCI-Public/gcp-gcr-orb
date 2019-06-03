@@ -31,7 +31,7 @@ parameters:
   tag:
     description: A docker image tag
     type: string
-    default: "latest"
+    default: latest
 
   path-to-dockerfile:
     description: The relative path to the Dockerfile to use when building image

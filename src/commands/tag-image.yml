@@ -18,6 +18,7 @@ parameters:
   source-tag:
     type: string
     description: An existing Docker image tag
+    default: latest
 
   target-tag:
     type: string
