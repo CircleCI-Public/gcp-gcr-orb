@@ -17,10 +17,7 @@ parameters:
 
   source-tag:
     type: string
-    default: ""
-    description: >
-      An existing Docker image tag. If left blank, the most recently
-      pushed image will be tagged with the value of `target-tag`.
+    description: An existing Docker image tag
 
   target-tag:
     type: string
@@ -28,9 +25,9 @@ parameters:
 
 steps:
   - run:
-      name: Add <<parameters.target-tag>> tag to <<parameters.registry-url>>/$<<parameters.google-project-id>>/<<parameters.image>><<#parameters.source-tag>>:<<parameters.source-tag>><</parameters.source-tag>>
+      name: Add <<parameters.target-tag>> tag to <<parameters.registry-url>>/$<<parameters.google-project-id>>/<<parameters.image>>:<<parameters.source-tag>>
       command: |
         IMAGE_ROOT=<<parameters.registry-url>>/$<<parameters.google-project-id>>/<<parameters.image>>
         gcloud container images add-tag --quiet \
-          "${IMAGE_ROOT}<<#parameters.source-tag>>:<<parameters.source-tag>><</parameters.source-tag>>" \
+          "${IMAGE_ROOT}:<<parameters.source-tag>>" \
           "${IMAGE_ROOT}:<<parameters.target-tag>>"
