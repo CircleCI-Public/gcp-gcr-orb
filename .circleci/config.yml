@@ -41,7 +41,7 @@ integration-master_filters: &integration-master_filters
 prod-deploy_requires: &prod-deploy_requires
   [
     build-and-push-image-master,
-    build-push-defaults-master
+    build-push-defaults-master,
     tag-image-master
   ]
 
