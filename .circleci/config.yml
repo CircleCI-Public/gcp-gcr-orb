@@ -4,7 +4,7 @@ version: 2.1
 
 orbs:
   gcp-gcr: circleci/gcp-gcr@dev:alpha
-  orb-tools: circleci/orb-tools@8.9.2
+  orb-tools: circleci/orb-tools@8.14.0
 
 jobs:
   test-orb-commands:
@@ -38,10 +38,22 @@ integration-master_filters: &integration-master_filters
   tags:
     only: /master-.*/
 
+push-job-post-steps: &push-job-post-steps
+  [
+    run: "echo \"${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUM\" > TAG",
+    persist_to_workspace: {root: ., paths: [TAG]}
+  ]
+
+tag-job-pre-steps: &tag-job-pre-steps
+  [
+    attach_workspace: {at: .}
+  ]
+
 prod-deploy_requires: &prod-deploy_requires
   [
     build-and-push-image-master,
-    build-push-defaults-master
+    build-push-defaults-master,
+    tag-image-master
   ]
 
 workflows:
@@ -50,24 +62,19 @@ workflows:
       - orb-tools/lint
 
       - orb-tools/pack:
-          requires:
-            - orb-tools/lint
+          requires: [orb-tools/lint]
 
       - orb-tools/publish-dev:
           orb-name: circleci/gcp-gcr
           context: orb-publishing
-          requires:
-            - orb-tools/pack
+          requires: [orb-tools/pack]
 
       - orb-tools/trigger-integration-workflow:
           name: trigger-integration-dev
           context: orb-publishing
           ssh-fingerprints: be:d5:b0:4f:41:21:6a:0b:77:19:c4:35:22:a5:1b:11
-          requires:
-            - orb-tools/publish-dev
-          filters:
-            branches:
-              ignore: master
+          requires: [orb-tools/publish-dev]
+          filters: {branches: {ignore: master}}
 
       - orb-tools/trigger-integration-workflow:
           name: trigger-integration-master
@@ -75,11 +82,8 @@ workflows:
           cleanup-tags: true
           ssh-fingerprints: be:d5:b0:4f:41:21:6a:0b:77:19:c4:35:22:a5:1b:11
           tag: master
-          requires:
-            - orb-tools/publish-dev
-          filters:
-            branches:
-              only: master
+          requires: [orb-tools/publish-dev]
+          filters: {branches: {only: master}}
 
   integration_test-prod_deploy:
     jobs:
@@ -92,19 +96,29 @@ workflows:
       # test orb jobs
       - gcp-gcr/build-and-push-image:
           name: build-and-push-image-dev
-          requires:
-            - test-orb-commands-dev
           registry-url: us.gcr.io
           image: sample-image
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUM
+          requires: [test-orb-commands-dev]
           filters: *integration-dev_filters
+          post-steps: *push-job-post-steps
+
+      - gcp-gcr/add-image-tag:
+          name: tag-image-dev
+          context: orb-publishing
+          registry-url: us.gcr.io
+          image: sample-image
+          source-tag: "$(cat TAG)"
+          target-tag: testing-dev
+          requires: [build-and-push-image-dev]
+          filters: *integration-dev_filters
+          pre-steps: *tag-job-pre-steps
 
       # test orb jobs with default values only
       - gcp-gcr/build-and-push-image:
           name: build-push-defaults-dev
-          requires:
-            - test-orb-commands-dev
           image: sample-image
+          requires: [test-orb-commands-dev]
           filters: *integration-dev_filters
 
       # triggered by master branch commits
@@ -116,19 +130,29 @@ workflows:
       # test orb jobs
       - gcp-gcr/build-and-push-image:
           name: build-and-push-image-master
-          requires:
-            - test-orb-commands-master
           registry-url: us.gcr.io
           image: sample-image
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUM
+          requires: [test-orb-commands-master]
           filters: *integration-master_filters
+          post-steps: *push-job-post-steps
+
+      - gcp-gcr/add-image-tag:
+          name: tag-image-master
+          context: orb-publishing
+          registry-url: us.gcr.io
+          image: sample-image
+          source-tag: "$(cat TAG)"
+          target-tag: testing-master
+          filters: *integration-master_filters
+          requires: [build-and-push-image-master]
+          pre-steps: *tag-job-pre-steps
 
       # test orb jobs with default values only
       - gcp-gcr/build-and-push-image:
           name: build-push-defaults-master
-          requires:
-            - test-orb-commands-master
           image: sample-image
+          requires: [test-orb-commands-master]
           filters: *integration-master_filters
 
       # patch, minor, or major publishing
@@ -138,10 +162,8 @@ workflows:
           orb-name: circleci/gcp-gcr
           requires: *prod-deploy_requires
           filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /master-patch.*/
+            branches: {ignore: /.*/}
+            tags: {only: /master-patch.*/}
 
       - orb-tools/dev-promote-prod:
           name: dev-promote-minor
@@ -150,10 +172,8 @@ workflows:
           release: minor
           requires: *prod-deploy_requires
           filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /master-minor.*/
+            branches: {ignore: /.*/}
+            tags: {only: /master-minor.*/}
 
       - orb-tools/dev-promote-prod:
           name: dev-promote-major
@@ -162,7 +182,5 @@ workflows:
           release: major
           requires: *prod-deploy_requires
           filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /master-major.*/
+            branches: {ignore: /.*/}
+            tags: {only: /master-major.*/}

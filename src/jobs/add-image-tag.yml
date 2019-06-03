@@ -1,5 +1,5 @@
 description: >
-  Install GCP CLI, if needed, and configure. Build and push image to repository.
+  Install GCP CLI, if needed, and configure. Adds a tag to an existing image.
 
 executor: default
 
@@ -25,36 +25,27 @@ parameters:
     default: gcr.io
 
   image:
-    description: A name for your docker image
+    description: A name for your Docker image
     type: string
 
-  tag:
-    description: A docker image tag
+  source-tag:
     type: string
-    default: latest
+    description: An existing Docker image tag
 
-  path-to-dockerfile:
-    description: The relative path to the Dockerfile to use when building image
+  target-tag:
     type: string
-    default: "."
+    description: A new Docker image tag
 
 steps:
-  - checkout
 
   - gcr-auth:
       google-project-id: <<parameters.google-project-id>>
       google-compute-zone: <<parameters.google-compute-zone>>
       gcloud-service-key: <<parameters.gcloud-service-key>>
 
-  - build-image:
+  - tag-image:
       registry-url: <<parameters.registry-url>>
       google-project-id: <<parameters.google-project-id>>
       image: <<parameters.image>>
-      tag: << parameters.tag >>
-      path-to-dockerfile: <<parameters.path-to-dockerfile>>
-
-  - push-image:
-      registry-url: <<parameters.registry-url>>
-      google-project-id: <<parameters.google-project-id>>
-      image: <<parameters.image>>
-      tag: <<parameters.tag>>
+      source-tag: <<parameters.source-tag>>
+      target-tag: <<parameters.target-tag>>
