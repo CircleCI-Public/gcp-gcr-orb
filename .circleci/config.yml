@@ -62,24 +62,19 @@ workflows:
       - orb-tools/lint
 
       - orb-tools/pack:
-          requires:
-            - orb-tools/lint
+          requires: {orb-tools/lint}
 
       - orb-tools/publish-dev:
           orb-name: circleci/gcp-gcr
           context: orb-publishing
-          requires:
-            - orb-tools/pack
+          requires: [orb-tools/pack]
 
       - orb-tools/trigger-integration-workflow:
           name: trigger-integration-dev
           context: orb-publishing
           ssh-fingerprints: be:d5:b0:4f:41:21:6a:0b:77:19:c4:35:22:a5:1b:11
-          requires:
-            - orb-tools/publish-dev
-          filters:
-            branches:
-              ignore: master
+          requires: [orb-tools/publish-dev]
+          filters: {branches: {ignore: master}}
 
       - orb-tools/trigger-integration-workflow:
           name: trigger-integration-master
@@ -87,11 +82,8 @@ workflows:
           cleanup-tags: true
           ssh-fingerprints: be:d5:b0:4f:41:21:6a:0b:77:19:c4:35:22:a5:1b:11
           tag: master
-          requires:
-            - orb-tools/publish-dev
-          filters:
-            branches:
-              only: master
+          requires: [orb-tools/publish-dev]
+          filters: {branches: {only: master}}
 
   integration_test-prod_deploy:
     jobs:
@@ -169,10 +161,8 @@ workflows:
           orb-name: circleci/gcp-gcr
           requires: *prod-deploy_requires
           filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /master-patch.*/
+            branches: {ignore: /.*/}
+            tags: {only: /master-patch.*/}
 
       - orb-tools/dev-promote-prod:
           name: dev-promote-minor
@@ -181,10 +171,8 @@ workflows:
           release: minor
           requires: *prod-deploy_requires
           filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /master-minor.*/
+            branches: {ignore: /.*/}
+            tags: {only: /master-minor.*/}
 
       - orb-tools/dev-promote-prod:
           name: dev-promote-major
@@ -193,7 +181,5 @@ workflows:
           release: major
           requires: *prod-deploy_requires
           filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /master-major.*/
+            branches: {ignore: /.*/}
+            tags: {only: /master-major.*/}
