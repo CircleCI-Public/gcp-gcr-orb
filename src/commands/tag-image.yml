@@ -15,7 +15,7 @@ parameters:
     type: string
     description: A Docker image name
 
-source-tag:
+  source-tag:
     type: string
     default: ""
     description: >
