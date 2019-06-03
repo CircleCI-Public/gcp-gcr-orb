@@ -42,6 +42,7 @@ prod-deploy_requires: &prod-deploy_requires
   [
     build-and-push-image-master,
     build-push-defaults-master
+    tag-image-master
   ]
 
 workflows:
@@ -99,6 +100,15 @@ workflows:
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUM
           filters: *integration-dev_filters
 
+      - gcp-gcr/add-image-tag:
+          name: tag-image-dev
+          context: orb-publishing
+          registry-url: us.gcr.io
+          image: sample-image
+          source-tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
+          target-tag: testing-dev
+          filters: *integration-dev_filters
+
       # test orb jobs with default values only
       - gcp-gcr/build-and-push-image:
           name: build-push-defaults-dev
@@ -121,6 +131,15 @@ workflows:
           registry-url: us.gcr.io
           image: sample-image
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUM
+          filters: *integration-master_filters
+
+      - gcp-gcr/add-image-tag:
+          name: tag-image-master
+          context: orb-publishing
+          registry-url: us.gcr.io
+          image: sample-image
+          source-tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
+          target-tag: testing-master
           filters: *integration-master_filters
 
       # test orb jobs with default values only

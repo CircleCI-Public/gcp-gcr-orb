@@ -11,17 +11,17 @@ parameters:
     type: env_var_name
     default: GOOGLE_PROJECT_ID
 
-  image: 
-    description: A docker image name
+  image:
     type: string
+    description: A Docker image name
 
   source-tag:
-    description: An existing docker image tag
     type: string
+    description: An existing Docker image tag
 
   target-tag:
-    description: A new docker image tag
     type: string
+    description: A new Docker image tag
 
 steps:
   - run:
@@ -29,4 +29,3 @@ steps:
       command: |
         IMAGE_ROOT=<<parameters.registry-url>>/$<<parameters.google-project-id>>/<<parameters.image>>
         gcloud container images add-tag --quiet "${IMAGE_ROOT}:<<parameters.source-tag>>" "${IMAGE_ROOT}:<<parameters.target-tag>>"
-        

@@ -47,5 +47,5 @@ steps:
       registry-url: <<parameters.registry-url>>
       google-project-id: <<parameters.google-project-id>>
       image: <<parameters.image>>
-      source-tag: << parameters.source-tag >>
-      target-tag: << parametrs.target-tag >>
+      source-tag: <<parameters.source-tag>>
+      target-tag: <<parametrs.target-tag>>
