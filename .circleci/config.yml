@@ -12,7 +12,6 @@ jobs:
     steps:
       # test orb commands
       - checkout
-
       - gcp-gcr/gcr-auth
 
       - gcp-gcr/build-image:
