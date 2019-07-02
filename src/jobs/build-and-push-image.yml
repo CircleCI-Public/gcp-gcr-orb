@@ -25,18 +25,32 @@ parameters:
     default: gcr.io
 
   image:
-    description: A name for your docker image
     type: string
+    description: A name for your Docker image
 
   tag:
-    description: A docker image tag
     type: string
     default: latest
+    description: A Docker image tag
 
-  path-to-dockerfile:
-    description: The relative path to the Dockerfile to use when building image
+  dockerfile:
     type: string
-    default: "."
+    default: Dockerfile
+    description: Name of dockerfile to use, defaults to Dockerfile
+
+  path:
+    type: string
+    default: .
+    description: >
+      Path to the directory containing your Dockerfile and build context,
+      defaults to . (working directory)
+
+  extra_build_args:
+    type: string
+    default: ""
+    description: >
+      Extra flags to pass to docker build. For examples, see
+      https://docs.docker.com/engine/reference/commandline/build
 
 steps:
   - checkout
@@ -50,8 +64,10 @@ steps:
       registry-url: <<parameters.registry-url>>
       google-project-id: <<parameters.google-project-id>>
       image: <<parameters.image>>
-      tag: << parameters.tag >>
-      path-to-dockerfile: <<parameters.path-to-dockerfile>>
+      tag: <<parameters.tag>>
+      dockerfile: <<parameters.dockerfile>>
+      path: <<parameters.path>>
+      extra_build_args: <<parameters.extra_build_args>>
 
   - push-image:
       registry-url: <<parameters.registry-url>>

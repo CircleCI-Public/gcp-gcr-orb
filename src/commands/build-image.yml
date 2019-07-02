@@ -20,15 +20,31 @@ parameters:
     default: latest
     description: A Docker image tag
 
-  path-to-dockerfile:
+  dockerfile:
     type: string
-    default: "."
-    description: The relative path to the Dockerfile to use when building image
+    default: Dockerfile
+    description: Name of dockerfile to use, defaults to Dockerfile
+
+  path:
+    type: string
+    default: .
+    description: >
+      Path to the directory containing your Dockerfile and build context,
+      defaults to . (working directory)
+
+  extra_build_args:
+    type: string
+    default: ""
+    description: >
+      Extra flags to pass to docker build. For examples, see
+      https://docs.docker.com/engine/reference/commandline/build
 
 steps:
-  - run:
-      name: Build docker image
-      command: |
-        docker build -t \
-          <<parameters.registry-url>>/$<<parameters.google-project-id>>/<<parameters.image>>:<<parameters.tag>> \
-          <<parameters.path-to-dockerfile>>
+  - docker/build:
+      step-name: Build Docker image for GCR
+      dockerfile: <<parameters.dockerfile>>
+      path: <<parameters.path>>
+      registry: <<parameters.registry-url>>/<<parameters.google-project-id>>
+      image: <<parameters.image>>
+      tag: <<parameters.tag>>
+      extra_build_args: <<parameters.extra_build_args>>

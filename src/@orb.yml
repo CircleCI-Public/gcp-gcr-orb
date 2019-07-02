@@ -5,4 +5,5 @@ description: >
   orb's source: https://github.com/CircleCI-Public/gcp-gcr-orb
 
 orbs:
+  docker: circleci/docker@0.5.1
   gcp-cli: circleci/gcp-cli@1.3.0
