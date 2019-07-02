@@ -4,7 +4,7 @@ version: 2.1
 
 orbs:
   gcp-gcr: circleci/gcp-gcr@dev:alpha
-  orb-tools: circleci/orb-tools@8.14.0
+  orb-tools: circleci/orb-tools@8.27.1
 
 jobs:
   test-orb-commands:
@@ -160,6 +160,7 @@ workflows:
           name: dev-promote-patch
           context: orb-publishing
           orb-name: circleci/gcp-gcr
+          ssh-fingerprints: be:d5:b0:4f:41:21:6a:0b:77:19:c4:35:22:a5:1b:11
           requires: *prod-deploy_requires
           filters:
             branches: {ignore: /.*/}
@@ -170,6 +171,7 @@ workflows:
           context: orb-publishing
           orb-name: circleci/gcp-gcr
           release: minor
+          ssh-fingerprints: be:d5:b0:4f:41:21:6a:0b:77:19:c4:35:22:a5:1b:11
           requires: *prod-deploy_requires
           filters:
             branches: {ignore: /.*/}
@@ -180,6 +182,7 @@ workflows:
           context: orb-publishing
           orb-name: circleci/gcp-gcr
           release: major
+          ssh-fingerprints: be:d5:b0:4f:41:21:6a:0b:77:19:c4:35:22:a5:1b:11
           requires: *prod-deploy_requires
           filters:
             branches: {ignore: /.*/}
