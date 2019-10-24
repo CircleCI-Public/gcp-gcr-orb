@@ -20,8 +20,18 @@ parameters:
     type: string
     default: "latest"
 
+  digest-path:
+    type: string
+    description: The path to save the RepoDigest of the pushed image
+    default: ""
+
 steps:
   - run:
       name: Push image to GCR
       command: |
         docker push <<parameters.registry-url>>/$<<parameters.google-project-id>>/<<parameters.image>>:<<parameters.tag>>
+
+        if [ -n "<<parameters.digest-path>>" ]; then
+          mkdir -p "$(dirname <<parameters.digest-path>>)"
+          docker image inspect --format="{{index .RepoDigests 0}}" <<parameters.registry-url>>/$<<parameters.google-project-id>>/<<parameters.image>>:<<parameters.tag>> > "<<parameters.digest-path>>"
+        fi
