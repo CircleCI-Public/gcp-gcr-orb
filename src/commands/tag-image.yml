@@ -1,4 +1,4 @@
-description: Push a container image to the GCR registry
+description: Tag an existing image
 
 parameters:
   registry-url:
