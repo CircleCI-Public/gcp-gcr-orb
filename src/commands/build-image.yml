@@ -39,7 +39,27 @@ parameters:
       Extra flags to pass to docker build. For examples, see
       https://docs.docker.com/engine/reference/commandline/build
 
+  attach-workspace:
+    type: boolean
+    default: false
+    description: >
+      Boolean for whether or not to attach to an existing workspace. Default
+      is false.
+
+  workspace-root:
+    type: string
+    default: "."
+    description: >
+      Workspace root path that is either an absolute path or a path relative
+      to the working directory. Defaults to '.' (the working directory)
+
 steps:
+  - when:
+      condition: <<parameters.attach-workspace>>
+      steps:
+        - attach_workspace:
+            at: <<parameters.workspace-root>>
+
   - docker/build:
       step-name: Build Docker image for GCR
       dockerfile: <<parameters.dockerfile>>
