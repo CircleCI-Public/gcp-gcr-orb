@@ -7,7 +7,7 @@ orbs:
 # Integration tests
 integration_tests: &integration_tests
   [
-    integration-test-1
+    integration-tests-1
   ]
 orb_prep_jobs: &orb_prep_jobs
   [
