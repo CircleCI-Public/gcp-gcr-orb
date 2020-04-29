@@ -43,6 +43,12 @@ jobs:
           registry-url: us.gcr.io
           image: sample-image
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
+      
+      - gcp-gcr/tag-image:
+          registry-url: us.gcr.io
+          image: sample-image
+          source-tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
+          target-tag: tagged.$CIRCLE_BUILD_NUMBER
 
 workflows:
   # This `lint-pack_validate_publish-dev` workflow will run on any commit.
