@@ -77,8 +77,7 @@ workflows:
     when: << pipeline.parameters.run-integration-tests >>
     jobs:
 
-      - integration-tests-1:
-          context: gcp-gcr-orb-testing
+      - integration-tests-1
 
       # publish a semver version of the orb. relies on
       # the commit subject containing the text "[semver:patch|minor|major|skip]"
