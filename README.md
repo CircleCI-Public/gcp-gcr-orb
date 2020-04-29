@@ -11,3 +11,14 @@ _For full usage guidelines, see the [orb registry listing](http://circleci.com/o
 We welcome [issues](https://github.com/CircleCI-Public/gcp-gcr-orb/issues) to and [pull requests](https://github.com/CircleCI-Public/gcp-gcr-orb/pulls) against this repository!
 
 For further questions/comments about this or other orbs, visit [CircleCI's orbs discussion forum](https://discuss.circleci.com/c/orbs).
+
+### How To Contribute
+
+We welcome [issues](https://github.com/CircleCI-Public/serverless-framework-orb/issues) to and [pull requests](https://github.com/CircleCI-Public/serverless-framework-orb/pulls) against this repository!
+
+To publish a new production version:
+* Create a PR to the `Alpha` branch with your changes. This will act as a "staging" branch.
+* When ready to publish a new production version, create a PR from `Alpha` to `master`. The Git Subject should include `[semver:patch|minor|release|skip]` to indicate the type of release.
+* On merge, the release will be published to the orb registry automatically.
+
+For further questions/comments about this or other orbs, visit the Orb Category of [CircleCI Discuss](https://discuss.circleci.com/c/orbs).
