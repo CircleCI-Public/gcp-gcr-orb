@@ -51,14 +51,17 @@ workflows:
     unless: << pipeline.parameters.run-integration-tests >>
     jobs:
       - orb-tools/lint
-      - orb-tools/shellcheck
+      - orb-tools/shellcheck:
+          exclude: "SC1073"
       - orb-tools/pack
       - approve_for_testing:
           type: approval
+          requires: *orb_prep_jobs
       - orb-tools/publish-dev:
           orb-name: circleci/gcp-gcr
           context: orb-publishing
-          requires: *orb_prep_jobs
+          requires:
+            - approve_for_testing
       # trigger an integration workflow to test the
       # dev:${CIRCLE_SHA1:0:7} version of your orb
       - orb-tools/trigger-integration-tests-workflow:
