@@ -75,7 +75,7 @@ workflows:
     when: << pipeline.parameters.run-integration-tests >>
     jobs:
 
-      - integration-test-1:
+      - integration-tests-1:
           context: gcp-gcr-orb-testing
 
       # publish a semver version of the orb. relies on
