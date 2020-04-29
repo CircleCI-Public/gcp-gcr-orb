@@ -14,7 +14,6 @@ orb_prep_jobs: &orb_prep_jobs
     orb-tools/lint,
     orb-tools/shellcheck,
     orb-tools/pack,
-    approve_for_testing
   ]
 # Pipeline parameters
 parameters:
