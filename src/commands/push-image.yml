@@ -22,7 +22,7 @@ parameters:
 
   digest-path:
     type: string
-    description: The path to save the RepoDigest of the pushed image
+    description: (Optional) The path to save the RepoDigest of the pushed image
     default: ""
 
 steps:
