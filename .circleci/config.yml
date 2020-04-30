@@ -7,7 +7,6 @@ orbs:
 # Integration tests
 integration_tests: &integration_tests
   [
-    integration-tests-1,
     build-and-push-job
   ]
 orb_prep_jobs: &orb_prep_jobs
@@ -91,6 +90,8 @@ workflows:
           image: sample-image
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
           digest-path: /tmp/digest.txt
+          requires:
+            - integration-tests-1
           post-steps:
             - run:
                 command: |
