@@ -1,13 +1,33 @@
-# CircleCI build config to test the Google Cloud Platform Container Registry Orb published by CircleCI
-
 version: 2.1
 
 orbs:
-  gcp-gcr: circleci/gcp-gcr@dev:alpha
-  orb-tools: circleci/orb-tools@8.27.1
+  gcp-gcr: circleci/gcp-gcr@<<pipeline.parameters.dev-orb-version>>
+  orb-tools: circleci/orb-tools@9.1
+
+# Integration tests
+integration_tests: &integration_tests
+  [
+    integration-tests-1
+  ]
+orb_prep_jobs: &orb_prep_jobs
+  [
+    orb-tools/lint,
+    orb-tools/shellcheck,
+    orb-tools/pack,
+  ]
+# Pipeline parameters
+parameters:
+  # These pipeline parameters are required by the "trigger-integration-tests-workflow"
+  # job, by default.
+  run-integration-tests:
+    type: boolean
+    default: false
+  dev-orb-version:
+    type: string
+    default: "dev:alpha"
 
 jobs:
-  test-orb-commands:
+  integration-tests-1:
     executor: gcp-gcr/default
     steps:
       # test orb commands
@@ -24,164 +44,60 @@ jobs:
           image: sample-image
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
 
-integration-dev_filters: &integration-dev_filters
-  branches:
-    ignore: /.*/
-  tags:
-    only: /integration-.*/
-
-integration-master_filters: &integration-master_filters
-  branches:
-    ignore: /.*/
-  tags:
-    only: /master-.*/
-
-push-job-post-steps: &push-job-post-steps
-  [
-    run: "echo \"${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUM\" > TAG",
-    persist_to_workspace: {root: ., paths: [TAG]}
-  ]
-
-tag-job-pre-steps: &tag-job-pre-steps
-  [
-    attach_workspace: {at: .}
-  ]
-
-prod-deploy_requires: &prod-deploy_requires
-  [
-    build-and-push-image-master,
-    build-push-defaults-master,
-    tag-image-master
-  ]
+      - gcp-gcr/tag-image:
+          registry-url: us.gcr.io
+          image: sample-image
+          source-tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
+          target-tag: tagged.$CIRCLE_BUILD_NUMBER
 
 workflows:
-  validate_unit-test_dev-deploy:
+  # This `lint-pack_validate_publish-dev` workflow will run on any commit.
+  lint_pack-validate_publish-dev:
+    unless: << pipeline.parameters.run-integration-tests >>
     jobs:
       - orb-tools/lint
-
-      - orb-tools/pack:
-          requires: [orb-tools/lint]
-
+      - orb-tools/shellcheck:
+          exclude: "SC1073, SC1009"
+      - orb-tools/pack
+      - approve_for_testing:
+          type: approval
+          requires: *orb_prep_jobs
       - orb-tools/publish-dev:
           orb-name: circleci/gcp-gcr
           context: orb-publishing
-          requires: [orb-tools/pack]
-
-      - orb-tools/trigger-integration-workflow:
+          requires:
+            - approve_for_testing
+      # trigger an integration workflow to test the
+      # dev:${CIRCLE_SHA1:0:7} version of your orb
+      - orb-tools/trigger-integration-tests-workflow:
           name: trigger-integration-dev
           context: orb-publishing
-          ssh-fingerprints: be:d5:b0:4f:41:21:6a:0b:77:19:c4:35:22:a5:1b:11
-          requires: [orb-tools/publish-dev]
-          filters: {branches: {ignore: master}}
+          requires:
+            - orb-tools/publish-dev
 
-      - orb-tools/trigger-integration-workflow:
-          name: trigger-integration-master
-          context: orb-publishing
-          cleanup-tags: true
-          ssh-fingerprints: be:d5:b0:4f:41:21:6a:0b:77:19:c4:35:22:a5:1b:11
-          tag: master
-          requires: [orb-tools/publish-dev]
-          filters: {branches: {only: master}}
-
-  integration_test-prod_deploy:
+  # This `integration-tests_prod-release` workflow will only run
+  # when the run-integration-tests pipeline parameter is set to true.
+  # It is meant to be triggered by the "trigger-integration-tests-workflow"
+  # job, and run tests on <your orb>@dev:${CIRCLE_SHA1:0:7}.
+  integration-tests_prod-release:
+    when: << pipeline.parameters.run-integration-tests >>
     jobs:
-      # triggered by non-master branch commits
-      # test orb commands
-      - test-orb-commands:
-          name: test-orb-commands-dev
-          filters: *integration-dev_filters
 
-      # test orb jobs
-      - gcp-gcr/build-and-push-image:
-          name: build-and-push-image-dev
-          registry-url: us.gcr.io
-          image: sample-image
-          tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUM
-          requires: [test-orb-commands-dev]
-          filters: *integration-dev_filters
-          post-steps: *push-job-post-steps
+      - integration-tests-1
 
-      - gcp-gcr/add-image-tag:
-          name: tag-image-dev
-          context: orb-publishing
-          registry-url: us.gcr.io
-          image: sample-image
-          source-tag: "$(cat TAG)"
-          target-tag: testing-dev
-          requires: [build-and-push-image-dev]
-          filters: *integration-dev_filters
-          pre-steps: *tag-job-pre-steps
-
-      # test orb jobs with default values only
-      - gcp-gcr/build-and-push-image:
-          name: build-push-defaults-dev
-          image: sample-image
-          requires: [test-orb-commands-dev]
-          filters: *integration-dev_filters
-
-      # triggered by master branch commits
-      # test orb commands
-      - test-orb-commands:
-          name: test-orb-commands-master
-          filters: *integration-master_filters
-
-      # test orb jobs
-      - gcp-gcr/build-and-push-image:
-          name: build-and-push-image-master
-          registry-url: us.gcr.io
-          image: sample-image
-          tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUM
-          requires: [test-orb-commands-master]
-          filters: *integration-master_filters
-          post-steps: *push-job-post-steps
-
-      - gcp-gcr/add-image-tag:
-          name: tag-image-master
-          context: orb-publishing
-          registry-url: us.gcr.io
-          image: sample-image
-          source-tag: "$(cat TAG)"
-          target-tag: testing-master
-          filters: *integration-master_filters
-          requires: [build-and-push-image-master]
-          pre-steps: *tag-job-pre-steps
-
-      # test orb jobs with default values only
-      - gcp-gcr/build-and-push-image:
-          name: build-push-defaults-master
-          image: sample-image
-          requires: [test-orb-commands-master]
-          filters: *integration-master_filters
-
-      # patch, minor, or major publishing
-      - orb-tools/dev-promote-prod:
-          name: dev-promote-patch
-          context: orb-publishing
+      # publish a semver version of the orb. relies on
+      # the commit subject containing the text "[semver:patch|minor|major|skip]"
+      # as that will determine whether a patch, minor or major
+      # version will be published or if publishing should
+      # be skipped.
+      # e.g. [semver:patch] will cause a patch version to be published.
+      - orb-tools/dev-promote-prod-from-commit-subject:
           orb-name: circleci/gcp-gcr
-          ssh-fingerprints: be:d5:b0:4f:41:21:6a:0b:77:19:c4:35:22:a5:1b:11
-          requires: *prod-deploy_requires
-          filters:
-            branches: {ignore: /.*/}
-            tags: {only: /master-patch.*/}
-
-      - orb-tools/dev-promote-prod:
-          name: dev-promote-minor
           context: orb-publishing
-          orb-name: circleci/gcp-gcr
-          release: minor
-          ssh-fingerprints: be:d5:b0:4f:41:21:6a:0b:77:19:c4:35:22:a5:1b:11
-          requires: *prod-deploy_requires
+          add-pr-comment: false
+          fail-if-semver-not-indicated: true
+          publish-version-tag: false
+          requires: *integration_tests
           filters:
-            branches: {ignore: /.*/}
-            tags: {only: /master-minor.*/}
-
-      - orb-tools/dev-promote-prod:
-          name: dev-promote-major
-          context: orb-publishing
-          orb-name: circleci/gcp-gcr
-          release: major
-          ssh-fingerprints: be:d5:b0:4f:41:21:6a:0b:77:19:c4:35:22:a5:1b:11
-          requires: *prod-deploy_requires
-          filters:
-            branches: {ignore: /.*/}
-            tags: {only: /master-major.*/}
+            branches:
+              only: master
