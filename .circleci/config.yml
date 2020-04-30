@@ -7,7 +7,7 @@ orbs:
 # Integration tests
 integration_tests: &integration_tests
   [
-    integration-tests-1
+    build-and-push-job
   ]
 orb_prep_jobs: &orb_prep_jobs
   [
@@ -84,6 +84,18 @@ workflows:
     jobs:
 
       - integration-tests-1
+      - gcp-gcr/build-and-push-image:
+          name: build-and-push-job
+          registry-url: us.gcr.io
+          image: sample-image
+          tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
+          digest-path: /tmp/digest.txt
+          requires:
+            - integration-tests-1
+          post-steps:
+            - run:
+                command: |
+                  echo "Digest is: $(</tmp/digest.txt)"
 
       # publish a semver version of the orb. relies on
       # the commit subject containing the text "[semver:patch|minor|major|skip]"
@@ -94,9 +106,12 @@ workflows:
       - orb-tools/dev-promote-prod-from-commit-subject:
           orb-name: circleci/gcp-gcr
           context: orb-publishing
-          add-pr-comment: false
+          add-pr-comment: true
+          bot-token-variable: GHI_TOKEN
+          bot-user: cpe-bot
           fail-if-semver-not-indicated: true
-          publish-version-tag: false
+          publish-version-tag: true
+          ssh-fingerprints: be:d5:b0:4f:41:21:6a:0b:77:19:c4:35:22:a5:1b:11
           requires: *integration_tests
           filters:
             branches:
