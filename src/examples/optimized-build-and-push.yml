@@ -1,0 +1,27 @@
+description: >
+  Log into Google Cloud Plaform, then build and push image to GCR. Uses a custom executor to reduce the setup time.
+
+usage:
+  version: 2.1
+
+  orbs:
+    gcp-gcr: circleci/gcp-gcr@x.y.z
+
+  executors:
+    my-executor:
+      docker:
+        # choose an image that contains the gcloud CLI to avoid installation during CI
+        # you can extend CircleCI base images https://circleci.com/docs/2.0/circleci-images/#circleci-base-image
+        # example: https://github.com/RequestNetwork/circleci/blob/master/python/3.7/Dockerfile
+        - image: requestnetwork/circleci-python:3.7
+
+  workflows:
+    build_and_push_image:
+      jobs:
+        - gcp-gcr/build-and-push-image:
+            context: myContext # your context containing gcloud login variables
+            registry-url: us.gcr.io # gcr.io, eu.gcr.io, asia.gcr.io
+            image: my-image # your image name
+            executor: my-executor # choose an image with gcloud already installed
+            setup-remote-docker: true # mandatory for custom docker executor
+            use-docker-layer-caching: true # optional, improved performance. 

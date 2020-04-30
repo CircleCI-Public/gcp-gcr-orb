@@ -1,9 +1,14 @@
 description: >
   Install GCP CLI, if needed, and configure. Adds a tag to an existing image.
 
-executor: default
+executor: <<parameters.executor>>
 
 parameters:
+  executor:
+    default: default
+    description: executor to use for this job
+    type: executor
+
   gcloud-service-key:
     description: The gcloud service key
     type: env_var_name
