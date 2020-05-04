@@ -1,0 +1,30 @@
+description: >
+  Log into Google Cloud Plaform, build and push image to GCR, then echo the image digest
+
+usage:
+  version: 2.1
+
+  orbs:
+    gcp-gcr: circleci/gcp-gcr@x.y.z
+
+  jobs:
+    build-and-push:
+      executor: gcp-gcr/default
+      steps:
+        - checkout
+        - gcp-gcr/gcr-auth
+        - gcp-gcr/build-image:
+            image: orb-test
+            registry-url: eu.gcr.io
+        - gcp-gcr/push-image:
+            image: orb-test
+            registry-url: eu.gcr.io
+            digest-path: /tmp/digest.txt
+        - run:
+            command: |
+              echo "Digest is: $(</tmp/digest.txt)"
+
+  workflows:
+    commit:
+      jobs:
+        - build-and-push

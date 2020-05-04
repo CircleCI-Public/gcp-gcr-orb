@@ -1,9 +1,12 @@
 version: 2.1
 
 description: >
-  An orb for working with Google Container Registry (GCR). View this
-  orb's source: https://github.com/CircleCI-Public/gcp-gcr-orb
+  An orb for working with Google Container Registry (GCR).
+
+display:
+  home_url: "https://cloud.google.com/container-registry"
+  source_url: "https://github.com/CircleCI-Public/gcp-gcr-orb"
 
 orbs:
-  docker: circleci/docker@0.5.1
-  gcp-cli: circleci/gcp-cli@1.3.0
+  docker: circleci/docker@1.0
+  gcp-cli: circleci/gcp-cli@1.8
