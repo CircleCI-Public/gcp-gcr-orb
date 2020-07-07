@@ -39,10 +39,18 @@ parameters:
       Extra flags to pass to docker build. For examples, see
       https://docs.docker.com/engine/reference/commandline/build
 
+  docker-context:
+    type: string
+    default: .
+    description: >
+      Path to the directory containing your build context, defaults to .
+      (working directory)
+
 steps:
   - docker/build:
       step-name: Build Docker image for GCR
       dockerfile: <<parameters.dockerfile>>
+      docker-context: <<parameters.docker-context>>
       path: <<parameters.path>>
       registry: "<<parameters.registry-url>>/$<<parameters.google-project-id>>"
       image: <<parameters.image>>
