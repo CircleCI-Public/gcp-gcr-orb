@@ -12,8 +12,7 @@ usage:
       docker:
         # choose an image that contains the gcloud CLI to avoid installation during CI
         # you can extend CircleCI base images https://circleci.com/docs/2.0/circleci-images/#circleci-base-image
-        # example: https://github.com/RequestNetwork/circleci/blob/master/python/3.7/Dockerfile
-        - image: requestnetwork/circleci-python:3.7
+        - image: my-org/circleci-python:3.7
 
   workflows:
     build_and_push_image:
