@@ -10,7 +10,7 @@ usage:
   workflows:
     build_and_push_image:
       jobs:
-        - gcp-gcr/add-image-tag:
+        - gcp-gcr/tag-image:
             context: myContext # your context containing gcloud login variables
             registry-url: us.gcr.io # gcr.io, eu.gcr.io, asia.gcr.io
             image: my-image # your image name
