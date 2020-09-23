@@ -29,7 +29,7 @@ parameters:
     type: string
     default: .
     description: >
-      Path to the directory containing your Dockerfile and build context,
+      Path to the directory containing your Dockerfile,
       defaults to . (working directory)
 
   extra_build_args:
@@ -53,6 +53,13 @@ parameters:
       Workspace root path that is either an absolute path or a path relative
       to the working directory. Defaults to '.' (the working directory)
 
+  docker-context:
+    type: string
+    default: .
+    description: >
+      Path to the directory containing your build context, defaults to .
+      (working directory)
+
 steps:
   - when:
       condition: <<parameters.attach-workspace>>
@@ -63,6 +70,7 @@ steps:
   - docker/build:
       step-name: Build Docker image for GCR
       dockerfile: <<parameters.dockerfile>>
+      docker-context: <<parameters.docker-context>>
       path: <<parameters.path>>
       registry: "<<parameters.registry-url>>/$<<parameters.google-project-id>>"
       image: <<parameters.image>>

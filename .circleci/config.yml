@@ -38,6 +38,8 @@ jobs:
           registry-url: us.gcr.io
           image: sample-image
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
+          path: ~/project/sample/
+          docker-context: ~/project/sample/
 
       - gcp-gcr/push-image:
           registry-url: us.gcr.io
@@ -90,6 +92,8 @@ workflows:
           image: sample-image
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
           digest-path: /tmp/digest.txt
+          path: ~/project/sample/
+          docker-context: ~/project/sample/
           requires:
             - integration-tests-1
           post-steps:

@@ -42,7 +42,7 @@ parameters:
     type: string
     default: .
     description: >
-      Path to the directory containing your Dockerfile and build context,
+      Path to the directory containing your Dockerfile,
       defaults to . (working directory)
 
   extra_build_args:
@@ -71,6 +71,13 @@ parameters:
       Workspace root path that is either an absolute path or a path relative
       to the working directory. Defaults to '.' (the working directory)
 
+  docker-context:
+    type: string
+    default: .
+    description: >
+      Path to the directory containing your build context, defaults to .
+      (working directory)
+
 steps:
   - checkout
 
@@ -89,6 +96,7 @@ steps:
       extra_build_args: <<parameters.extra_build_args>>
       attach-workspace: <<parameters.attach-workspace>>
       workspace-root: <<parameters.workspace-root>>
+      docker-context: <<parameters.docker-context>>
 
   - push-image:
       registry-url: <<parameters.registry-url>>
