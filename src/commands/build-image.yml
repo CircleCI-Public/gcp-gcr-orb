@@ -60,6 +60,13 @@ parameters:
       Path to the directory containing your build context, defaults to .
       (working directory)
 
+  no_output_timeout:
+    type: string
+    default: "10m"
+    description: >
+      Pass through a default timeout if your Docker build does not output
+      anything for more than 10 minutes.
+
 steps:
   - when:
       condition: <<parameters.attach-workspace>>
@@ -76,3 +83,4 @@ steps:
       image: <<parameters.image>>
       tag: <<parameters.tag>>
       extra_build_args: <<parameters.extra_build_args>>
+      no_output_timeout: <<parameters.no_output_timeout>>
