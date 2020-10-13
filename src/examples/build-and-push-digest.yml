@@ -16,6 +16,7 @@ usage:
         - gcp-gcr/build-image:
             image: orb-test
             registry-url: eu.gcr.io
+            no_output_timeout: 20m
         - gcp-gcr/push-image:
             image: orb-test
             registry-url: eu.gcr.io
