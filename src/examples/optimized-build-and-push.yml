@@ -23,4 +23,4 @@ usage:
             image: my-image # your image name
             executor: my-executor # choose an image with gcloud already installed
             setup-remote-docker: true # mandatory for custom docker executor
-            use-docker-layer-caching: true # optional, improved performance. 
+            use-docker-layer-caching: true # optional, improved performance.

@@ -75,7 +75,7 @@ parameters:
     type: boolean
   use-docker-layer-caching:
     default: false
-    description: | 
+    description: |
       Setup docker layer caching for optimized build. Not available if using the default executor.
     type: boolean
 
@@ -85,8 +85,8 @@ steps:
   - when:
       condition: <<parameters.setup-remote-docker>>
       steps:
-      - setup_remote_docker:
-          docker_layer_caching: <<parameters.use-docker-layer-caching>>
+        - setup_remote_docker:
+            docker_layer_caching: <<parameters.use-docker-layer-caching>>
 
   - gcr-auth:
       google-project-id: <<parameters.google-project-id>>
