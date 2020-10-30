@@ -1,9 +1,14 @@
 description: >
   Install GCP CLI, if needed, and configure. Build and push image to repository.
 
-executor: default
+executor: <<parameters.executor>>
 
 parameters:
+  executor:
+    default: default
+    description: executor to use for this job
+    type: executor
+
   gcloud-service-key:
     description: The gcloud service key
     type: env_var_name
@@ -77,6 +82,16 @@ parameters:
     description: >
       Path to the directory containing your build context, defaults to .
       (working directory)
+  setup-remote-docker:
+    default: false
+    description: |
+      Setup and use CircleCI's remote Docker environment for Docker and docker-compose commands? Not required if using the default executor
+    type: boolean
+  use-docker-layer-caching:
+    default: false
+    description: |
+      Setup docker layer caching for optimized build. Not available if using the default executor.
+    type: boolean
 
   no_output_timeout:
     type: string
@@ -87,6 +102,12 @@ parameters:
 
 steps:
   - checkout
+
+  - when:
+      condition: <<parameters.setup-remote-docker>>
+      steps:
+        - setup_remote_docker:
+            docker_layer_caching: <<parameters.use-docker-layer-caching>>
 
   - gcr-auth:
       google-project-id: <<parameters.google-project-id>>
