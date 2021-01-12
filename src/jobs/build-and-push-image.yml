@@ -92,6 +92,11 @@ parameters:
     description: |
       Setup docker layer caching for optimized build. Not available if using the default executor.
     type: boolean
+  remote-docker-version:
+    default: "17.09.0-ce"
+    description: |
+      Specify the remote docker version. See: https://circleci.com/docs/2.0/building-docker-images/#docker-version
+    type: string
 
   no_output_timeout:
     type: string
@@ -108,6 +113,7 @@ steps:
       steps:
         - setup_remote_docker:
             docker_layer_caching: <<parameters.use-docker-layer-caching>>
+            version: <<parameters.remote-docker-version>>
 
   - gcr-auth:
       google-project-id: <<parameters.google-project-id>>
