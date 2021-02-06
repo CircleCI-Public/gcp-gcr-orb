@@ -24,6 +24,11 @@ parameters:
     type: env_var_name
     default: GOOGLE_COMPUTE_ZONE
 
+  google-compute-region:
+    description: The Google compute zone to connect with via the gcloud CLI
+    type: env_var_name
+    default: GOOGLE_COMPUTE_REGION
+
   registry-url:
     description: The GCR registry URL from ['', us, eu, asia].gcr.io
     type: string
@@ -118,6 +123,7 @@ steps:
   - gcr-auth:
       google-project-id: <<parameters.google-project-id>>
       google-compute-zone: <<parameters.google-compute-zone>>
+      google-compute-region: <<parameters.google-compute-region>>
       gcloud-service-key: <<parameters.gcloud-service-key>>
 
   - build-image:
