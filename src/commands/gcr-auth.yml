@@ -20,12 +20,19 @@ parameters:
     description: >
       The Google compute zone to connect with via the gcloud CLI
 
+  google-compute-region:
+    type: env_var_name
+    default: GOOGLE_COMPUTE_REGION
+    description: >
+      The Google compute region to connect with via the gcloud CLI
+
 steps:
   - gcp-cli/install
 
   - gcp-cli/initialize:
       google-project-id: <<parameters.google-project-id>>
       google-compute-zone: <<parameters.google-compute-zone>>
+      google-compute-region: <<parameters.google-compute-region>>
       gcloud-service-key: <<parameters.gcloud-service-key>>
 
   - run:
