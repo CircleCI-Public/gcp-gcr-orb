@@ -30,7 +30,9 @@ parameters:
     default: GOOGLE_COMPUTE_REGION
 
   registry-url:
-    description: The GCR registry URL from ['', us, eu, asia].gcr.io
+    description: >
+      The GCR registry URL from ['', us, eu, asia].gcr.io,
+      or an artifact registry url from [GOOGLE_COMPUTE_REGION, us, eu, asia].docker.pk.dev
     type: string
     default: gcr.io
 
@@ -125,6 +127,7 @@ steps:
       google-compute-zone: <<parameters.google-compute-zone>>
       google-compute-region: <<parameters.google-compute-region>>
       gcloud-service-key: <<parameters.gcloud-service-key>>
+      registry-url: <<parameters.registry-url>>
 
   - build-image:
       registry-url: <<parameters.registry-url>>
