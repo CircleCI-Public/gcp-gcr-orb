@@ -26,6 +26,13 @@ parameters:
     description: >
       The Google compute region to connect with via the gcloud CLI
 
+  registry-url:
+    description: >
+      The GCR registry URL from ['', us, eu, asia].gcr.io,
+      or an artifact registry url from [GOOGLE_COMPUTE_REGION, us, eu, asia].docker.pkg.dev
+    type: string
+    default: gcr.io
+
 steps:
   - gcp-cli/install
 
@@ -43,7 +50,12 @@ steps:
 
         # configure Docker to use gcloud as a credential helper
         mkdir -p "$HOME/.docker"
-        gcloud auth configure-docker --quiet --project $<<parameters.google-project-id>>
+
+        if [[ "<<parameters.registry-url>>" == "*docker.pkg.dev" ]]; then
+          gcloud auth configure-docker --quiet --project $<<parameters.google-project-id>> <<parameters.registry-url>>
+        else
+          gcloud auth configure-docker --quiet --project $<<parameters.google-project-id>>
+        fi
 
         # if applicable, provide user access to the docker config file
         if [[ -d "$HOME/.docker" ]]; then
