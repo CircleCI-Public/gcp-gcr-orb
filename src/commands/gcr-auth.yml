@@ -31,7 +31,6 @@ parameters:
       The GCR registry URL from ['', us, eu, asia].gcr.io,
       or an artifact registry url from [GOOGLE_COMPUTE_REGION, us, eu, asia].docker.pkg.dev
     type: string
-    default: gcr.io
 
 steps:
   - gcp-cli/install
@@ -51,8 +50,8 @@ steps:
         # configure Docker to use gcloud as a credential helper
         mkdir -p "$HOME/.docker"
 
-        if [[ <<parameters.registry-url>> == *docker.pkg.dev ]]; then
-          gcloud auth configure-docker --quiet --project $<<parameters.google-project-id>> <<parameters.registry-url>>
+        if [[ -n <<parameters.registry-url>> ]]; then
+          gcloud auth configure-docker <<parameters.registry-url>> --quiet --project $<<parameters.google-project-id>>
         else
           gcloud auth configure-docker --quiet --project $<<parameters.google-project-id>>
         fi
