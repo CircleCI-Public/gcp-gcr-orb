@@ -29,7 +29,7 @@ parameters:
   registry-url:
     description: >
       The GCR registry URL from ['', us, eu, asia].gcr.io,
-      or an artifact registry url from [GOOGLE_COMPUTE_REGION, us, eu, asia].docker.pk.dev
+      or an artifact registry url from [GOOGLE_COMPUTE_REGION, us, eu, asia].docker.pkg.dev
     type: string
     default: gcr.io
 
