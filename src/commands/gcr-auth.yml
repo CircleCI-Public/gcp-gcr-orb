@@ -51,7 +51,7 @@ steps:
         # configure Docker to use gcloud as a credential helper
         mkdir -p "$HOME/.docker"
 
-        if [[ "<<parameters.registry-url>>" == "*docker.pkg.dev" ]]; then
+        if [[ "<<parameters.registry-url>>" == *"docker.pkg.dev" ]]; then
           gcloud auth configure-docker --quiet --project $<<parameters.google-project-id>> <<parameters.registry-url>>
         else
           gcloud auth configure-docker --quiet --project $<<parameters.google-project-id>>
