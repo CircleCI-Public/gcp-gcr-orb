@@ -1,3 +1,4 @@
 description: A debian-based machine executor
 
-machine: true
+machine: 
+  image: ubuntu-2004:202201-02
