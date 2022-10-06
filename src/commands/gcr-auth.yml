@@ -33,8 +33,15 @@ parameters:
     type: string
     default: gcr.io
 
+  gcloud-version:
+    description: >
+      The default version of gcloud to use with gcp-cli
+    type: string
+    default: "404.0.0"
+
 steps:
-  - gcp-cli/install
+  - gcp-cli/install:
+      version: <<parameters.gcloud-version>>
 
   - gcp-cli/initialize:
       google-project-id: <<parameters.google-project-id>>
