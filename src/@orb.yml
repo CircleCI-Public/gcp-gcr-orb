@@ -9,4 +9,4 @@ display:
 
 orbs:
   docker: circleci/docker@1.5
-  gcp-cli: circleci/gcp-cli@2.1
+  gcp-cli: circleci/gcp-cli@2.4.1
