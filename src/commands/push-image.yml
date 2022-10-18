@@ -35,4 +35,3 @@ steps:
         PARAM_DIGEST_PATH: << parameters.digest-path >>
         PARAM_TAG: << parameters.tag >>
       command: << include(scripts/push-image.sh) >>
-        

@@ -2,7 +2,7 @@ description: Add a tag to an existing published image
 
 parameters:
   registry-url:
-    description: 'The GCR registry URL from ['''', us, eu, asia].gcr.io'
+    description: "The GCR registry URL from ['', us, eu, asia].gcr.io"
     type: string
     default: gcr.io
 
@@ -26,14 +26,10 @@ parameters:
 steps:
   - run:
       name: Add <<parameters.target-tag>> tag to <<parameters.registry-url>>/$<<parameters.google-project-id>>/<<parameters.image>>:<<parameters.source-tag>>
-      environment: 
+      environment:
         PARAM_REGISTRY_URL: << parameters.registry-url >>
         EVAL_PROJECT_ID: << parameters.google-project-id >>
         PARAM_IMAGE: << parameters.image >>
         PARAM_SOURCE_TAG: << parameters.source-tag >>
         PARAM_TARGET_TAG: << parameters.target-tag >>
-      command: |
-        IMAGE_ROOT="$PARAM_REGISTRY_URL/${!EVAL_PROJECT_ID}/$PARAM_IMAGE"
-        gcloud container images add-tag --quiet \
-          "$IMAGE_ROOT:$PARAM_SOURCE_TAG" \
-          "$IMAGE_ROOT:$PARAM_TARGET_TAG"
+      command: << include(scripts/tag-image.sh) >>
