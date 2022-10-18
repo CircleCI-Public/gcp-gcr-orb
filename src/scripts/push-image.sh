@@ -5,7 +5,7 @@ PROJECT_ID="${!INDIRECT_PROJECT_ID}"
 
 set -x
 for tag_to_eval in "${DOCKER_TAGS[@]}"; do
-    TAG=$(eval "$tag_to_eval")
+    TAG=$(eval echo "$tag_to_eval")
     docker push "$PARAM_REGISTRY_URL/$PROJECT_ID/$PARAM_IMAGE:$TAG"
 done
 
