@@ -42,7 +42,7 @@ workflows:
           docker-context: ~/project/sample/
           filters: *filters
           requires:
-            - integration-tests-1
+            - integration-test
           post-steps:
             - run:
                 command: |
