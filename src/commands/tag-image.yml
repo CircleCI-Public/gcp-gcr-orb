@@ -26,8 +26,14 @@ parameters:
 steps:
   - run:
       name: Add <<parameters.target-tag>> tag to <<parameters.registry-url>>/$<<parameters.google-project-id>>/<<parameters.image>>:<<parameters.source-tag>>
+      environment: 
+        PARAM_REGISTRY_URL: << parameters.registry_url >>
+        EVAL_PROJECT_ID: << parameters.google-project-id >>
+        PARAM_IMAGE: << parameters.image >>
+        PARAM_SOURCE_TAG: << parameters.source-tag >>
+        PARAM_TARGET_TAG: << parameters.target-tag >>
       command: |
-        IMAGE_ROOT=<<parameters.registry-url>>/$<<parameters.google-project-id>>/<<parameters.image>>
+        IMAGE_ROOT="$PARAM_REGISTRY_URL/${!EVAL_PROJECT_ID}/$PARAM_IMAGE"
         gcloud container images add-tag --quiet \
-          "${IMAGE_ROOT}:<<parameters.source-tag>>" \
-          "${IMAGE_ROOT}:<<parameters.target-tag>>"
+          "$IMAGE_ROOT:$PARAM_SOURCE_TAG" \
+          "$IMAGE_ROOT:$PARAM_TARGET_TAG"

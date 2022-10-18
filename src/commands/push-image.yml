@@ -28,13 +28,11 @@ parameters:
 steps:
   - run:
       name: Push image to GCR
-      command: |
-        IFS="," read -ra DOCKER_TAGS \<<< "<< parameters.tag >>"
-        for tag in "${DOCKER_TAGS[@]}"; do
-          docker push <<parameters.registry-url>>/$<<parameters.google-project-id>>/<<parameters.image>>:${tag}
-        done
-
-        if [ -n "<<parameters.digest-path>>" ]; then
-          mkdir -p "$(dirname <<parameters.digest-path>>)"
-          docker image inspect --format="{{index .RepoDigests 0}}" <<parameters.registry-url>>/$<<parameters.google-project-id>>/<<parameters.image>>:${DOCKER_TAGS[0]} > "<<parameters.digest-path>>"
-        fi
+      environment:
+        EVAL_PROJECT_ID: << parameters.google-project-id >>
+        PARAM_REGISTRY_URL: << parameters.registry-url >>
+        PARAM_IMAGE: << parameters.image >>
+        PARAM_DIGEST_PATH: << parameters.digest-path >>
+        PARAM_TAG: << parameters.tag >>
+      command: << include(scripts/push-image.sh) >>
+        

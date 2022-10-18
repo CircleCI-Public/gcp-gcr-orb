@@ -1,7 +1,7 @@
 version: 2.1
 
 description: >
-  An orb for working with Google Container Registry (GCR).
+  An orb for managing images with Google Container Registry (GCR).
 
 display:
   home_url: "https://cloud.google.com/container-registry"
