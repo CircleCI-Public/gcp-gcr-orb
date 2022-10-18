@@ -27,7 +27,7 @@ steps:
   - run:
       name: Add <<parameters.target-tag>> tag to <<parameters.registry-url>>/$<<parameters.google-project-id>>/<<parameters.image>>:<<parameters.source-tag>>
       environment: 
-        PARAM_REGISTRY_URL: << parameters.registry_url >>
+        PARAM_REGISTRY_URL: << parameters.registry-url >>
         EVAL_PROJECT_ID: << parameters.google-project-id >>
         PARAM_IMAGE: << parameters.image >>
         PARAM_SOURCE_TAG: << parameters.source-tag >>
