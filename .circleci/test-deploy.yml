@@ -1,0 +1,65 @@
+version: 2.1
+orbs:
+  gcp-gcr: circleci/gcp-gcr@dev:<<pipeline.git.revision>>
+  orb-tools: circleci/orb-tools@11.1
+filters: &filters
+  tags:
+    only: /.*/
+jobs:
+  integration-test:
+    executor: gcp-gcr/default
+    steps:
+      # test orb commands
+      - checkout
+      - gcp-gcr/gcr-auth
+      - gcp-gcr/build-image:
+          registry-url: us.gcr.io
+          image: sample-image
+          tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
+          path: ~/project/sample/
+          docker-context: ~/project/sample/
+      - gcp-gcr/push-image:
+          registry-url: us.gcr.io
+          image: sample-image
+          tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
+      - gcp-gcr/tag-image:
+          registry-url: us.gcr.io
+          image: sample-image
+          source-tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
+          target-tag: tagged.$CIRCLE_BUILD_NUMBER
+workflows:
+  test-deploy:
+    jobs:
+      - integration-test:
+          filters: *filters
+      - gcp-gcr/build-and-push-image:
+          name: build-and-push
+          registry-url: us.gcr.io
+          image: sample-image
+          tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
+          digest-path: /tmp/digest.txt
+          path: ~/project/sample/
+          docker-context: ~/project/sample/
+          filters: *filters
+          requires:
+            - integration-tests-1
+          post-steps:
+            - run:
+                command: |
+                  echo "Digest is: $(</tmp/digest.txt)"
+      - orb-tools/pack:
+          filters: *filters
+      - orb-tools/publish:
+          orb-name: circleci/gcp-gcr
+          vcs-type: << pipeline.project.type >>
+          pub-type: production
+          requires:
+            - orb-tools/pack
+            - integration-test
+            - build-and-push
+          context: orb-publisher
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
