@@ -7,9 +7,9 @@ if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
 mkdir -p "$HOME/.docker"
 
 if [[ "$PARAM_REGISTRY_URL" == *"docker.pkg.dev" ]]; then
-    gcloud auth configure-docker --quiet --project "${!EVAL_PROJECT_ID}" "$PARAM_REGISTRY_URL"
+    gcloud auth configure-docker --quiet --project "${!INDIRECT_PROJECT_ID}" "$PARAM_REGISTRY_URL"
 else
-    gcloud auth configure-docker --quiet --project "${!EVAL_PROJECT_ID}"
+    gcloud auth configure-docker --quiet --project "${!INDIRECT_PROJECT_ID}"
 fi
 
 # if applicable, provide user access to the docker config file

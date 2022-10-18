@@ -17,19 +17,19 @@ parameters:
 
   source-tag:
     type: string
-    description: An existing Docker image tag
+    description: An existing Docker image tag. The contents will be evaluated.
 
   target-tag:
     type: string
-    description: A new Docker image tag
+    description: A new Docker image tag. The contents will be evaluated.
 
 steps:
   - run:
       name: Add <<parameters.target-tag>> tag to <<parameters.registry-url>>/$<<parameters.google-project-id>>/<<parameters.image>>:<<parameters.source-tag>>
       environment:
         PARAM_REGISTRY_URL: << parameters.registry-url >>
-        EVAL_PROJECT_ID: << parameters.google-project-id >>
+        INDIRECT_PROJECT_ID: << parameters.google-project-id >>
         PARAM_IMAGE: << parameters.image >>
-        PARAM_SOURCE_TAG: << parameters.source-tag >>
-        PARAM_TARGET_TAG: << parameters.target-tag >>
+        EVAL_SOURCE_TAG: << parameters.source-tag >>
+        EVAL_TARGET_TAG: << parameters.target-tag >>
       command: << include(scripts/tag-image.sh) >>

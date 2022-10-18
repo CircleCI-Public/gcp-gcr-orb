@@ -16,7 +16,7 @@ parameters:
     type: string
 
   tag:
-    description: Comma-separated list of docker image tags
+    description: Comma-separated list of docker image tags. The contents of each will be evaluated.
     type: string
     default: "latest"
 
@@ -29,9 +29,9 @@ steps:
   - run:
       name: Push image to GCR
       environment:
-        EVAL_PROJECT_ID: << parameters.google-project-id >>
+        INDIRECT_PROJECT_ID: << parameters.google-project-id >>
         PARAM_REGISTRY_URL: << parameters.registry-url >>
         PARAM_IMAGE: << parameters.image >>
         PARAM_DIGEST_PATH: << parameters.digest-path >>
-        PARAM_TAG: << parameters.tag >>
+        EVAL_TAG: << parameters.tag >>
       command: << include(scripts/push-image.sh) >>

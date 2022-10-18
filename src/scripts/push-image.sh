@@ -1,11 +1,12 @@
 #!/bin/bash 
 
-IFS="," read -ra DOCKER_TAGS <<< "$PARAM_TAG"
-PROJECT_ID="${!EVAL_PROJECT_ID}"
+IFS="," read -ra DOCKER_TAGS <<< "$EVAL_TAG"
+PROJECT_ID="${!INDIRECT_PROJECT_ID}"
 
 set -x
-for tag in "${DOCKER_TAGS[@]}"; do
-    docker push "$PARAM_REGISTRY_URL/$PROJECT_ID/$PARAM_IMAGE:${tag}"
+for eval_tag in "${DOCKER_TAGS[@]}"; do
+    TAG=$(eval "$eval_tag")
+    docker push "$PARAM_REGISTRY_URL/$PROJECT_ID/$PARAM_IMAGE:$TAG"
 done
 
 if [ -n "$PARAM_DIGEST_PATH" ]; then
