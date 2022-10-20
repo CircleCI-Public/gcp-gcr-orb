@@ -16,7 +16,7 @@ parameters:
     type: string
 
   tag:
-    description: Comma-separated list of docker image tags
+    description: Comma-separated list of docker image tags. The contents of each will be evaluated.
     type: string
     default: "latest"
 
@@ -28,13 +28,10 @@ parameters:
 steps:
   - run:
       name: Push image to GCR
-      command: |
-        IFS="," read -ra DOCKER_TAGS \<<< "<< parameters.tag >>"
-        for tag in "${DOCKER_TAGS[@]}"; do
-          docker push <<parameters.registry-url>>/$<<parameters.google-project-id>>/<<parameters.image>>:${tag}
-        done
-
-        if [ -n "<<parameters.digest-path>>" ]; then
-          mkdir -p "$(dirname <<parameters.digest-path>>)"
-          docker image inspect --format="{{index .RepoDigests 0}}" <<parameters.registry-url>>/$<<parameters.google-project-id>>/<<parameters.image>>:${DOCKER_TAGS[0]} > "<<parameters.digest-path>>"
-        fi
+      environment:
+        ORB_ENV_PROJECT_ID: << parameters.google-project-id >>
+        ORB_VAL_REGISTRY_URL: << parameters.registry-url >>
+        ORB_VAL_IMAGE: << parameters.image >>
+        ORB_VAL_DIGEST_PATH: << parameters.digest-path >>
+        ORB_EVAL_TAG: << parameters.tag >>
+      command: << include(scripts/push-image.sh) >>
