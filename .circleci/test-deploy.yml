@@ -46,7 +46,7 @@ workflows:
           filters: *filters
           requires:
             - integration-test
-          pre-steps: 
+          pre-steps:
             - gcp-cli/install
             - gcp-cli/initialize
           post-steps:
