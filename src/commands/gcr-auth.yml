@@ -45,6 +45,6 @@ steps:
   - run:
       name: gcloud auth configure-docker
       environment:
-        INDIRECT_PROJECT_ID: << parameters.google-project-id >>
-        PARAM_REGISTRY_URL: << parameters.registry-url >>
+        ORB_ENV_PROJECT_ID: << parameters.google-project-id >>
+        ORB_VAL_REGISTRY_URL: << parameters.registry-url >>
       command: << include(scripts/gcr-auth.sh) >>

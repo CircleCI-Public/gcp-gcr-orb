@@ -29,9 +29,9 @@ steps:
   - run:
       name: Push image to GCR
       environment:
-        INDIRECT_PROJECT_ID: << parameters.google-project-id >>
-        PARAM_REGISTRY_URL: << parameters.registry-url >>
-        PARAM_IMAGE: << parameters.image >>
-        PARAM_DIGEST_PATH: << parameters.digest-path >>
-        EVAL_TAG: << parameters.tag >>
+        ORB_ENV_PROJECT_ID: << parameters.google-project-id >>
+        ORB_VAL_REGISTRY_URL: << parameters.registry-url >>
+        ORB_VAL_IMAGE: << parameters.image >>
+        ORB_VAL_DIGEST_PATH: << parameters.digest-path >>
+        ORB_EVAL_TAG: << parameters.tag >>
       command: << include(scripts/push-image.sh) >>

@@ -27,9 +27,9 @@ steps:
   - run:
       name: Add <<parameters.target-tag>> tag to <<parameters.registry-url>>/$<<parameters.google-project-id>>/<<parameters.image>>:<<parameters.source-tag>>
       environment:
-        PARAM_REGISTRY_URL: << parameters.registry-url >>
-        INDIRECT_PROJECT_ID: << parameters.google-project-id >>
-        PARAM_IMAGE: << parameters.image >>
-        EVAL_SOURCE_TAG: << parameters.source-tag >>
-        EVAL_TARGET_TAG: << parameters.target-tag >>
+        ORB_VAL_REGISTRY_URL: << parameters.registry-url >>
+        ORB_ENV_PROJECT_ID: << parameters.google-project-id >>
+        ORB_VAL_IMAGE: << parameters.image >>
+        ORB_EVAL_SOURCE_TAG: << parameters.source-tag >>
+        ORB_EVAL_TARGET_TAG: << parameters.target-tag >>
       command: << include(scripts/tag-image.sh) >>
