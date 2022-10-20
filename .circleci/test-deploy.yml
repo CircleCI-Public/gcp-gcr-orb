@@ -1,6 +1,7 @@
 version: 2.1
 orbs:
   gcp-gcr: circleci/gcp-gcr@dev:<<pipeline.git.revision>>
+  gcp-cli: circleci/gcp-cli@2.4.1
   orb-tools: circleci/orb-tools@11.4
 filters: &filters
   tags:
@@ -11,6 +12,8 @@ jobs:
     steps:
       # test orb commands
       - checkout
+      - gcp-cli/install
+      - gcp-cli/initialize
       - gcp-gcr/gcr-auth
       - gcp-gcr/build-image:
           registry-url: us.gcr.io
@@ -43,6 +46,9 @@ workflows:
           filters: *filters
           requires:
             - integration-test
+          pre-steps: 
+            - gcp-cli/install
+            - gcp-cli/initialize
           post-steps:
             - run:
                 command: |
