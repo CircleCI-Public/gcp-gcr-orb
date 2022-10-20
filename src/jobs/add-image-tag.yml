@@ -1,5 +1,5 @@
 description: >
-  Install GCP CLI, if needed, and configure. Adds a tag to an existing image.
+  Adds a tag to an existing image.
 
 executor: <<parameters.executor>>
 
@@ -9,25 +9,10 @@ parameters:
     description: executor to use for this job
     type: executor
 
-  gcloud-service-key:
-    description: The gcloud service key
-    type: env_var_name
-    default: GCLOUD_SERVICE_KEY
-
   google-project-id:
     description: The Google project ID to connect with via the gcloud CLI
     type: env_var_name
     default: GOOGLE_PROJECT_ID
-
-  google-compute-zone:
-    description: The Google compute zone to connect with via the gcloud CLI
-    type: env_var_name
-    default: GOOGLE_COMPUTE_ZONE
-
-  google-compute-region:
-    description: The Google compute zone to connect with via the gcloud CLI
-    type: env_var_name
-    default: GOOGLE_COMPUTE_REGION
 
   registry-url:
     description: The GCR registry URL from ['', us, eu, asia].gcr.io
@@ -47,12 +32,9 @@ parameters:
     description: A new Docker image tag
 
 steps:
-
   - gcr-auth:
+      registry-url: <<parameters.registry-url>>
       google-project-id: <<parameters.google-project-id>>
-      google-compute-zone: <<parameters.google-compute-zone>>
-      google-compute-region: <<parameters.google-compute-region>>
-      gcloud-service-key: <<parameters.gcloud-service-key>>
 
   - tag-image:
       registry-url: <<parameters.registry-url>>
