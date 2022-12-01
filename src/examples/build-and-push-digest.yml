@@ -5,6 +5,7 @@ usage:
   version: 2.1
 
   orbs:
+    gcp-cli: circleci/gcp-cli@x.y.z
     gcp-gcr: circleci/gcp-gcr@x.y.z
 
   jobs:
@@ -12,6 +13,9 @@ usage:
       executor: gcp-gcr/default
       steps:
         - checkout
+
+        - gcp-cli/setup
+
         - gcp-gcr/gcr-auth
         - gcp-gcr/build-image:
             image: orb-test
