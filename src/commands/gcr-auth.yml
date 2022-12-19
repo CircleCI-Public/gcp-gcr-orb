@@ -34,9 +34,7 @@ parameters:
     default: gcr.io
 
 steps:
-  - gcp-cli/install
-
-  - gcp-cli/initialize:
+  - gcp-cli/setup:
       google-project-id: <<parameters.google-project-id>>
       google-compute-zone: <<parameters.google-compute-zone>>
       google-compute-region: <<parameters.google-compute-region>>
