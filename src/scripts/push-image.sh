@@ -2,6 +2,7 @@
 
 IFS="," read -ra DOCKER_TAGS <<< "$ORB_EVAL_TAG"
 PROJECT_ID="${!ORB_ENV_PROJECT_ID}"
+ORB_VAL_IMAGE=$(eval echo "$ORB_VAL_IMAGE")
 
 for tag_to_eval in "${DOCKER_TAGS[@]}"; do
     TAG=$(eval echo "$tag_to_eval")
