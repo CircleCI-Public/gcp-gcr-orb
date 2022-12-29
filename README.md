@@ -14,7 +14,7 @@ For further questions/comments about this or other orbs, visit [CircleCI's orbs 
 
 ### How To Contribute
 
-We welcome [issues](https://github.com/CircleCI-Public/serverless-framework-orb/issues) to and [pull requests](https://github.com/CircleCI-Public/serverless-framework-orb/pulls) against this repository!
+We welcome [issues](https://github.com/CircleCI-Public/gcp-gcr-orb/issues) to and [pull requests](https://github.com/CircleCI-Public/gcp-gcr-orb/pulls) against this repository!
 
 To publish a new production version:
 * Create a PR to the `Alpha` branch with your changes. This will act as a "staging" branch.
