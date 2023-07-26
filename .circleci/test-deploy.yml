@@ -58,6 +58,22 @@ workflows:
             - run:
                 command: |
                   echo "Digest is: $(</tmp/digest.txt)"
+      - gcp-gcr/build-and-push-image:
+          name: build-and-push-with-env-var
+          registry-url: us.gcr.io
+          image: ${CIRCLE_PROJECT_REPONAME}
+          tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
+          digest-path: /tmp/digest.txt
+          path: ~/project/sample/
+          docker-context: ~/project/sample/
+          context: cpe-gcp
+          filters: *filters
+          requires:
+            - integration-test
+          post-steps:
+            - run:
+                command: |
+                  echo "Digest is: $(</tmp/digest.txt)"
       - orb-tools/pack:
           filters: *release-filters
       - orb-tools/publish:
@@ -70,5 +86,6 @@ workflows:
             - orb-tools/pack
             - integration-test
             - build-and-push
+            - build-and-push-with-env-var
           context: orb-publisher
           filters: *release-filters
