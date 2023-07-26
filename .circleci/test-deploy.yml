@@ -40,6 +40,7 @@ workflows:
   test-deploy:
     jobs:
       - integration-test:
+          context: cpe-gcp
           filters: *filters
       - gcp-gcr/build-and-push-image:
           name: build-and-push
@@ -49,6 +50,7 @@ workflows:
           digest-path: /tmp/digest.txt
           path: ~/project/sample/
           docker-context: ~/project/sample/
+          context: cpe-gcp
           filters: *filters
           requires:
             - integration-test
