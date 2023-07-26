@@ -1,10 +1,19 @@
 version: 2.1
+
 orbs:
-  gcp-gcr: circleci/gcp-gcr@dev:<<pipeline.git.revision>>
-  orb-tools: circleci/orb-tools@11.4
+  gcp-gcr: {}
+  orb-tools: circleci/orb-tools@12
+
 filters: &filters
   tags:
     only: /.*/
+
+release-filters: &release-filters
+  branches:
+    ignore: /.*/
+  tags:
+    only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
+
 jobs:
   integration-test:
     executor: gcp-gcr/default
@@ -31,6 +40,7 @@ workflows:
   test-deploy:
     jobs:
       - integration-test:
+          context: cpe-gcp
           filters: *filters
       - gcp-gcr/build-and-push-image:
           name: build-and-push
@@ -40,6 +50,7 @@ workflows:
           digest-path: /tmp/digest.txt
           path: ~/project/sample/
           docker-context: ~/project/sample/
+          context: cpe-gcp
           filters: *filters
           requires:
             - integration-test
@@ -48,18 +59,16 @@ workflows:
                 command: |
                   echo "Digest is: $(</tmp/digest.txt)"
       - orb-tools/pack:
-          filters: *filters
+          filters: *release-filters
       - orb-tools/publish:
-          orb-name: circleci/gcp-gcr
-          vcs-type: << pipeline.project.type >>
-          pub-type: production
+          orb_name: circleci/gcp-gcr
+          vcs_type: << pipeline.project.type >>
+          pub_type: production
+          enable_pr_comment: true
+          github_token: GHI_TOKEN
           requires:
             - orb-tools/pack
             - integration-test
             - build-and-push
           context: orb-publisher
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
+          filters: *release-filters
