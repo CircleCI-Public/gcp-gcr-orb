@@ -42,7 +42,7 @@ jobs:
       # test orb commands
       - checkout
       - gcp-gcr/gcr-auth:
-          use-oidc: true
+          use_oidc: true
       - gcp-gcr/build-image:
           registry-url: us.gcr.io
           image: sample-image
