@@ -46,6 +46,55 @@ parameters:
     type: string
     description: A new Docker image tag
 
+  gcloud_version:
+    type: string
+    default: latest
+    description: |
+      Version of gcloud CLI to install.
+
+  gcloud_components:
+      type: string
+      default: ""
+      description: >
+        The list of gcloud components to install. Space separated.
+        See https://cloud.google.com/sdk/docs/components for additional info.
+
+  # OIDC parameters
+
+  use_oidc:
+    type: boolean
+    default: false
+    description: Set to true to enable OIDC
+
+  google_project_number:
+    type: env_var_name
+    default: GOOGLE_PROJECT_NUMBER
+    description: |
+      Name of environment variable storing the Google project number
+      used to configure OIDC.
+
+  workload_identity_pool_id:
+    type: env_var_name
+    default: OIDC_WIP_ID
+    description: |
+      Environment variable containing OIDC configured workload identity pool is stored.
+
+  workload_identity_pool_provider_id:
+    type: env_var_name
+    default: OIDC_WIP_PROVIDER_ID
+    description: |
+      Environment variable containing OIDC configured workload identity pool provider ID is stored.
+
+  service_account_email:
+    type: env_var_name
+    default: OIDC_SERVICE_ACCOUNT_EMAIL
+    description: Environment variable containing OIDC service account email.
+
+  gcp_cred_config_file_path:
+    type: string
+    default: ~/gcp_cred_config.json
+    description: Output location of OIDC credentials.
+
 steps:
 
   - gcr-auth:
@@ -53,6 +102,14 @@ steps:
       google-compute-zone: <<parameters.google-compute-zone>>
       google-compute-region: <<parameters.google-compute-region>>
       gcloud-service-key: <<parameters.gcloud-service-key>>
+      version: <<parameters.gcloud_version>>
+      components: <<parameters.gcloud_components>>
+      use_oidc: << parameters.use_oidc >>
+      google_project_number: << parameters.google_project_number >>
+      workload_identity_pool_id: << parameters.workload_identity_pool_id >>
+      workload_identity_pool_provider_id: << parameters.workload_identity_pool_provider_id >>
+      service_account_email: << parameters.service_account_email >>
+      gcp_cred_config_file_path: << parameters.gcp_cred_config_file_path >>
 
   - tag-image:
       registry-url: <<parameters.registry-url>>
