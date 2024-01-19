@@ -46,18 +46,18 @@ jobs:
       - gcp-gcr/build-image:
           registry-url: us.gcr.io
           image: sample-image
-          tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
+          tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER.oidc
           path: ~/project/sample/
           docker-context: ~/project/sample/
       - gcp-gcr/push-image:
           registry-url: us.gcr.io
           image: sample-image
-          tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
+          tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER.oidc
       - gcp-gcr/tag-image:
           registry-url: us.gcr.io
           image: sample-image
-          source-tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
-          target-tag: tagged.$CIRCLE_BUILD_NUMBER
+          source-tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER.oidc
+          target-tag: tagged.$CIRCLE_BUILD_NUMBER.oidc
 
 workflows:
   test-deploy:
@@ -65,11 +65,8 @@ workflows:
       - integration-test-without-oidc:
           context: cpe-gcp
           filters: *filters
-      - integration-test-with-oidc:
-          context: cpe-gcp
-          filters: *filters
       - gcp-gcr/build-and-push-image:
-          name: build-and-push
+          name: build-and-push-without-oidc
           registry-url: us.gcr.io
           image: sample-image
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
@@ -79,7 +76,7 @@ workflows:
           context: cpe-gcp
           filters: *filters
           requires:
-            - integration-test
+            - integration-test-without-oidc
           post-steps:
             - run:
                 command: |
@@ -95,7 +92,27 @@ workflows:
           context: cpe-gcp
           filters: *filters
           requires:
-            - integration-test
+            - integration-test-without-oidc
+          post-steps:
+            - run:
+                command: |
+                  echo "Digest is: $(</tmp/digest.txt)"
+      - integration-test-with-oidc:
+          context: cpe-gcp
+          filters: *filters
+      - gcp-gcr/build-and-push-image:
+          name: build-and-push-with-oidc
+          registry-url: us.gcr.io
+          image: sample-image
+          tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER.oidc
+          digest-path: /tmp/digest.txt
+          path: ~/project/sample/
+          docker-context: ~/project/sample/
+          use_oidc: true
+          context: cpe-gcp
+          filters: *filters
+          requires:
+            - integration-test-with-oidc
           post-steps:
             - run:
                 command: |
@@ -111,8 +128,9 @@ workflows:
           requires:
             - orb-tools/pack
             - integration-test-without-oidc
-            - integration-test-with-oidc
-            - build-and-push
+            - build-and-push-without-oidc
             - build-and-push-with-env-var
+            - integration-test-with-oidc
+            - build-and-push-with-oidc
           context: orb-publisher
           filters: *release-filters
