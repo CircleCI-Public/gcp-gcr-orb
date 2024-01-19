@@ -47,7 +47,7 @@ parameters:
     default: ""
     description: >
       The list of gcloud components to install. Space separated.
-      See https://cloud.google.com/sdk/docs/components for additional 
+      See https://cloud.google.com/sdk/docs/components for additional
 
   # OIDC parameters
 
