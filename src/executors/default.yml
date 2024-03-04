@@ -1,4 +1,4 @@
 description: A debian-based machine executor
 
 machine:
-  image: ubuntu-2004:current
+  image: default
