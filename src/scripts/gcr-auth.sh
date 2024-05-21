@@ -7,9 +7,9 @@ if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
 mkdir -p "$HOME/.docker"
 
 if [[ "$ORB_VAL_REGISTRY_URL" == *"docker.pkg.dev" ]]; then
-    gcloud auth configure-docker --quiet --project "${!ORB_ENV_PROJECT_ID}" "$ORB_VAL_REGISTRY_URL"
+    $SUDO gcloud auth configure-docker --quiet --project "${!ORB_ENV_PROJECT_ID}" "$ORB_VAL_REGISTRY_URL"
 else
-    gcloud auth configure-docker --quiet --project "${!ORB_ENV_PROJECT_ID}"
+    $SUDO gcloud auth configure-docker --quiet --project "${!ORB_ENV_PROJECT_ID}"
 fi
 
 # if applicable, provide user access to the docker config file
