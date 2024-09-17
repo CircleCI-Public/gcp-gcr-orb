@@ -8,5 +8,5 @@ display:
   source_url: "https://github.com/CircleCI-Public/gcp-gcr-orb"
 
 orbs:
-  docker: circleci/docker@2.5
+  docker: circleci/docker@2.7.1
   gcp-cli: circleci/gcp-cli@3.2
