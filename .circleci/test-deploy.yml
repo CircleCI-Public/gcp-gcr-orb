@@ -68,20 +68,6 @@ jobs:
           source-tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER.oidc
           target-tag: tagged.$CIRCLE_BUILD_NUMBER.oidc
 
-  build-and-push-without-oidc:
-    parameters:
-      executor:
-        type: executor
-    executor: <<parameters.executor>>
-    steps:
-      - gcp-gcr/build-and-push-image:
-          registry-url: us.gcr.io
-          image: sample-image
-          tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
-          digest-path: /tmp/digest.txt
-          path: ~/project/sample/
-          docker-context: ~/project/sample/
-
 executors:
   alpine:
     docker:
@@ -108,12 +94,14 @@ workflows:
               executor: [gcp-gcr/default, ubuntu-2204-edge, windows-2019, windows-2022, alpine]
           context: cpe-gcp
           filters: *filters
-
-      - build-and-push-without-oidc:
-          matrix:
-            alias: build-and-push-without-oidc-alias
-            parameters:
-              executor: [gcp-gcr/default, ubuntu-2204-edge, windows-2019, windows-2022, alpine]
+      - gcp-gcr/build-and-push-image:
+          name: build-and-push-without-oidc
+          registry-url: us.gcr.io
+          image: sample-image
+          tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
+          digest-path: /tmp/digest.txt
+          path: ~/project/sample/
+          docker-context: ~/project/sample/
           context: cpe-gcp
           filters: *filters
           requires:
@@ -122,7 +110,6 @@ workflows:
             - run:
                 command: |
                   echo "Digest is: $(</tmp/digest.txt)"
-
       - gcp-gcr/build-and-push-image:
           name: build-and-push-with-env-var
           registry-url: us.gcr.io
@@ -139,7 +126,6 @@ workflows:
             - run:
                 command: |
                   echo "Digest is: $(</tmp/digest.txt)"
-
       - integration-test-with-oidc:
           matrix:
             alias: integration-test-with-oidc-alias
@@ -147,7 +133,6 @@ workflows:
               executor: [gcp-gcr/default, ubuntu-2204-edge, windows-2019, windows-2022, alpine]
           context: cpe-gcp
           filters: *filters
-
       - gcp-gcr/build-and-push-image:
           name: build-and-push-with-oidc
           registry-url: us.gcr.io
@@ -165,7 +150,6 @@ workflows:
             - run:
                 command: |
                   echo "Digest is: $(</tmp/digest.txt)"
-
       - orb-tools/pack:
           filters: *release-filters
       - orb-tools/publish:
