@@ -16,7 +16,10 @@ release-filters: &release-filters
 
 jobs:
   integration-test-without-oidc:
-    executor: gcp-gcr/default
+    parameters:
+      executor:
+        type: executor
+    executor: <<parameters.executor>>
     steps:
       # test orb commands
       - checkout
@@ -65,6 +68,10 @@ workflows:
   test-deploy:
     jobs:
       - integration-test-without-oidc:
+          matrix:
+            alias: test-executor-versions
+            parameters:
+              executor: [gcp-cli/default, gcp-cli/machine, ubuntu-2204-edge]
           context: cpe-gcp
           filters: *filters
       - gcp-gcr/build-and-push-image:
