@@ -41,8 +41,12 @@ jobs:
           image: sample-image
           source-tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
           target-tag: tagged.$CIRCLE_BUILD_NUMBER
+
   integration-test-with-oidc:
-    executor: gcp-gcr/default
+    parameters:
+      executor:
+        type: executor
+    executor: <<parameters.executor>>
     steps:
       # test orb commands
       - checkout
@@ -123,6 +127,10 @@ workflows:
                 command: |
                   echo "Digest is: $(</tmp/digest.txt)"
       - integration-test-with-oidc:
+          matrix:
+            alias: integration-test-with-oidc-alias
+            parameters:
+              executor: [gcp-gcr/default, ubuntu-2204-edge, windows-2019, windows-2022]
           context: cpe-gcp
           filters: *filters
       - gcp-gcr/build-and-push-image:
@@ -137,7 +145,7 @@ workflows:
           context: cpe-gcp
           filters: *filters
           requires:
-            - integration-test-with-oidc
+            - integration-test-with-oidc-alias
           post-steps:
             - run:
                 command: |
@@ -155,7 +163,7 @@ workflows:
             - integration-test-without-oidc-alias
             - build-and-push-without-oidc
             - build-and-push-with-env-var
-            - integration-test-with-oidc
+            - integration-test-with-oidc-alias
             - build-and-push-with-oidc
           context: orb-publisher
           filters: *release-filters
