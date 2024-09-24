@@ -1,0 +1,17 @@
+description: >
+  Log into Google Cloud Plaform, then build and push image to Artifact Registry
+
+usage:
+  version: 2.1
+
+  orbs:
+    gcp-gcr: circleci/gcp-gcr@x.y.z
+
+  workflows:
+    build_and_push_image:
+      jobs:
+        - gcp-gcr/build-and-push-image:
+            context: myContext # your context containing gcloud login variables
+            registry-url: us-central1-docker.pkg.dev # gcr.io, eu.gcr.io, asia.gcr.io
+            repository: my-repo # your repository name
+            image: my-image # your image name
