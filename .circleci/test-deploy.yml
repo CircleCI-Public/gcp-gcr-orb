@@ -68,6 +68,20 @@ jobs:
           source-tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER.oidc
           target-tag: tagged.$CIRCLE_BUILD_NUMBER.oidc
 
+  build-and-push-without-oidc:
+    parameters:
+      executor:
+        type: executor
+    executor: <<parameters.executor>>
+    steps:
+      - gcp-gcr/build-and-push-image:
+          registry-url: us.gcr.io
+          image: sample-image
+          tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
+          digest-path: /tmp/digest.txt
+          path: ~/project/sample/
+          docker-context: ~/project/sample/
+
 executors:
   alpine:
     docker:
@@ -91,22 +105,15 @@ workflows:
           matrix:
             alias: integration-test-without-oidc-alias
             parameters:
-              executor: [gcp-gcr/default, ubuntu-2204-edge, windows-2019, windows-2022]
+              executor: [gcp-gcr/default, ubuntu-2204-edge, windows-2019, windows-2022, alpine]
           context: cpe-gcp
           filters: *filters
 
-      - gcp-gcr/build-and-push-image:
+      - build-and-push-without-oidc
           matrix:
-            alias: build-and-push-without-oidc
+            alias: build-and-push-without-oidc-alias
             parameters:
-              executor: [gcp-gcr/default, ubuntu-2204-edge, windows-2019, windows-2022]
-          executor: <<parameters.executor>>
-          registry-url: us.gcr.io
-          image: sample-image
-          tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
-          digest-path: /tmp/digest.txt
-          path: ~/project/sample/
-          docker-context: ~/project/sample/
+              executor: [gcp-gcr/default, ubuntu-2204-edge, windows-2019, windows-2022, alpine]
           context: cpe-gcp
           filters: *filters
           requires:
@@ -137,7 +144,7 @@ workflows:
           matrix:
             alias: integration-test-with-oidc-alias
             parameters:
-              executor: [gcp-gcr/default, ubuntu-2204-edge, windows-2019, windows-2022]
+              executor: [gcp-gcr/default, ubuntu-2204-edge, windows-2019, windows-2022, alpine]
           context: cpe-gcp
           filters: *filters
 
