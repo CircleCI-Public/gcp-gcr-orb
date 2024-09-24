@@ -64,6 +64,22 @@ jobs:
           source-tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER.oidc
           target-tag: tagged.$CIRCLE_BUILD_NUMBER.oidc
 
+executors:
+  alpine:
+    docker:
+      - image: python:3.8-alpine
+  windows-2019:
+    machine:
+      resource_class: windows.medium
+      image: windows-server-2019-vs2019:current
+  windows-2022:
+    machine:
+      resource_class: windows.medium
+      image: windows-server-2022-gui:current
+  ubuntu-2204-edge:
+    machine:
+      image: ubuntu-2204:edge
+
 workflows:
   test-deploy:
     jobs:
