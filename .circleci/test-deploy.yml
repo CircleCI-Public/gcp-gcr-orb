@@ -94,8 +94,10 @@ workflows:
               executor: [gcp-gcr/default, ubuntu-2204-edge, windows-2019, windows-2022, alpine]
           context: cpe-gcp
           filters: *filters
+
       - gcp-gcr/build-and-push-image:
           name: build-and-push-without-oidc
+          executor: gcp-gcr/default
           registry-url: us.gcr.io
           image: sample-image
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
@@ -110,8 +112,10 @@ workflows:
             - run:
                 command: |
                   echo "Digest is: $(</tmp/digest.txt)"
+
       - gcp-gcr/build-and-push-image:
           name: build-and-push-with-env-var
+          executor: gcp-gcr/default
           registry-url: us.gcr.io
           image: ${CIRCLE_PROJECT_REPONAME}
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
@@ -126,6 +130,7 @@ workflows:
             - run:
                 command: |
                   echo "Digest is: $(</tmp/digest.txt)"
+
       - integration-test-with-oidc:
           matrix:
             alias: integration-test-with-oidc-alias
@@ -133,8 +138,10 @@ workflows:
               executor: [gcp-gcr/default, ubuntu-2204-edge, windows-2019, windows-2022, alpine]
           context: cpe-gcp
           filters: *filters
+
       - gcp-gcr/build-and-push-image:
           name: build-and-push-with-oidc
+          executor: gcp-gcr/default
           registry-url: us.gcr.io
           image: sample-image
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER.oidc
@@ -150,6 +157,7 @@ workflows:
             - run:
                 command: |
                   echo "Digest is: $(</tmp/digest.txt)"
+
       - orb-tools/pack:
           filters: *release-filters
       - orb-tools/publish:
