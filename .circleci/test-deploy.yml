@@ -109,7 +109,7 @@ workflows:
           context: cpe-gcp
           filters: *filters
 
-      - build-and-push-without-oidc
+      - build-and-push-without-oidc:
           matrix:
             alias: build-and-push-without-oidc-alias
             parameters:
