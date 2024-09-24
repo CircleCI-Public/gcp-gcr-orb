@@ -71,7 +71,7 @@ workflows:
           matrix:
             alias: test-executor-versions
             parameters:
-              executor: [gcp-cli/default, gcp-cli/machine, ubuntu-2204-edge]
+              executor: [gcp-gcr/default, ubuntu-2204-edge, windows-2019, windows-2022]
           context: cpe-gcp
           filters: *filters
       - gcp-gcr/build-and-push-image:
