@@ -1,16 +1,22 @@
 #!/bin/bash 
 
 ORB_VAL_REGISTRY_URL="$(circleci env subst "$ORB_VAL_REGISTRY_URL")"
+ORB_VAL_REPOSITORY="$(circleci env subst "$ORB_VAL_REPOSITORY")"
 ORB_VAL_IMAGE="$(circleci env subst "$ORB_VAL_IMAGE")"
 ORB_VAL_DIGEST_PATH="$(circleci env subst "$ORB_VAL_DIGEST_PATH")"
 
 IFS="," read -ra DOCKER_TAGS <<< "$ORB_EVAL_TAG"
 PROJECT_ID="${!ORB_ENV_PROJECT_ID}"
 
+DOCKER_PATH="$ORB_VAL_REGISTRY_URL/$PROJECT_ID/$ORB_VAL_IMAGE:$TAG"
+if [ -n "${ORB_VAL_REPOSITORY}" ]; then
+    DOCKER_PATH="$ORB_VAL_REGISTRY_URL/$PROJECT_ID/$ORB_VAL_REPOSITORY/$ORB_VAL_IMAGE:$TAG"
+fi
+
 for tag_to_eval in "${DOCKER_TAGS[@]}"; do
     TAG=$(eval echo "$tag_to_eval")
     set -x
-    docker push "$ORB_VAL_REGISTRY_URL/$PROJECT_ID/$ORB_VAL_IMAGE:$TAG"
+    docker push "$DOCKER_PATH"
     set +x
 done
 

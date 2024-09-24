@@ -36,6 +36,13 @@ parameters:
     type: string
     default: gcr.io
 
+  repository:
+    type: string
+    default: ""
+    description: >
+      The Artifact Registry requires a HOST-NAME/PROJECT-ID/REPOSITORY/IMAGE format.
+      If pushing to the Artifact Registry, the repository to push the image to
+
   image:
     type: string
     description: A name for your Docker image
@@ -188,6 +195,7 @@ steps:
 
   - build-image:
       registry-url: <<parameters.registry-url>>
+      repository: <<parameters.repository>>
       google-project-id: <<parameters.google-project-id>>
       image: <<parameters.image>>
       tag: <<parameters.tag>>
@@ -201,6 +209,7 @@ steps:
 
   - push-image:
       registry-url: <<parameters.registry-url>>
+      repository: <<parameters.repository>>
       google-project-id: <<parameters.google-project-id>>
       image: <<parameters.image>>
       tag: <<parameters.tag>>

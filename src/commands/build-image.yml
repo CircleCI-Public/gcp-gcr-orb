@@ -5,7 +5,14 @@ parameters:
     type: string
     default: gcr.io
     description: The GCR registry URL from ['', us, eu, asia].gcr.io
-
+  
+  repository:
+    type: string
+    default: ""
+    description: >
+      The Artifact Registry requires a HOST-NAME/PROJECT-ID/REPOSITORY/IMAGE format.
+      If pushing to the Artifact Registry, the repository to push the image to
+      
   google-project-id:
     type: env_var_name
     default: GOOGLE_PROJECT_ID
@@ -73,14 +80,32 @@ steps:
       steps:
         - attach_workspace:
             at: <<parameters.workspace-root>>
-
-  - docker/build:
-      step-name: Build Docker image for GCR
-      dockerfile: <<parameters.dockerfile>>
-      docker-context: <<parameters.docker-context>>
-      path: <<parameters.path>>
-      registry: "<<parameters.registry-url>>/$<<parameters.google-project-id>>"
-      image: <<parameters.image>>
-      tag: <<parameters.tag>>
-      extra_build_args: <<parameters.extra_build_args>>
-      no_output_timeout: <<parameters.no_output_timeout>>
+  - when:
+      condition: 
+        equal: [ "", << parameters.repository >> ]
+      steps:
+        - docker/build:
+            step-name: Build Docker image for GCR
+            dockerfile: <<parameters.dockerfile>>
+            docker-context: <<parameters.docker-context>>
+            path: <<parameters.path>>
+            registry: "<<parameters.registry-url>>/$<<parameters.google-project-id>>"
+            image: <<parameters.image>>
+            tag: <<parameters.tag>>
+            extra_build_args: <<parameters.extra_build_args>>
+            no_output_timeout: <<parameters.no_output_timeout>>
+  - when:
+      condition: 
+        not:
+          equal: [ "", << parameters.repository >> ]
+      steps:
+        - docker/build:
+            step-name: Build Docker image for GCR
+            dockerfile: <<parameters.dockerfile>>
+            docker-context: <<parameters.docker-context>>
+            path: <<parameters.path>>
+            registry: "<<parameters.registry-url>>/$<<parameters.google-project-id>>/<<parameters.repository>>"
+            image: <<parameters.image>>
+            tag: <<parameters.tag>>
+            extra_build_args: <<parameters.extra_build_args>>
+            no_output_timeout: <<parameters.no_output_timeout>>
