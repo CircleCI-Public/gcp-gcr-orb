@@ -85,7 +85,7 @@ workflows:
     jobs:
       - integration-test-without-oidc:
           matrix:
-            alias: test-executor-versions
+            alias: integration-test-without-oidc-alias
             parameters:
               executor: [gcp-gcr/default, ubuntu-2204-edge, windows-2019, windows-2022]
           context: cpe-gcp
@@ -101,7 +101,7 @@ workflows:
           context: cpe-gcp
           filters: *filters
           requires:
-            - integration-test-without-oidc
+            - integration-test-without-oidc-alias
           post-steps:
             - run:
                 command: |
@@ -117,7 +117,7 @@ workflows:
           context: cpe-gcp
           filters: *filters
           requires:
-            - integration-test-without-oidc
+            - integration-test-without-oidc-alias
           post-steps:
             - run:
                 command: |
@@ -152,7 +152,7 @@ workflows:
           github_token: GHI_TOKEN
           requires:
             - orb-tools/pack
-            - integration-test-without-oidc
+            - integration-test-without-oidc-alias
             - build-and-push-without-oidc
             - build-and-push-with-env-var
             - integration-test-with-oidc
