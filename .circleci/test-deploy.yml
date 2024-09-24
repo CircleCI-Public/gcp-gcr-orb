@@ -69,9 +69,6 @@ jobs:
           target-tag: tagged.$CIRCLE_BUILD_NUMBER.oidc
 
 executors:
-  alpine:
-    docker:
-      - image: python:3.8-alpine
   windows-2019:
     machine:
       resource_class: windows.medium
@@ -91,7 +88,7 @@ workflows:
           matrix:
             alias: integration-test-without-oidc-alias
             parameters:
-              executor: [gcp-gcr/default, ubuntu-2204-edge, windows-2019, windows-2022, alpine]
+              executor: [gcp-gcr/default, ubuntu-2204-edge, windows-2019, windows-2022]
           context: cpe-gcp
           filters: *filters
 
@@ -135,7 +132,7 @@ workflows:
           matrix:
             alias: integration-test-with-oidc-alias
             parameters:
-              executor: [gcp-gcr/default, ubuntu-2204-edge, windows-2019, windows-2022, alpine]
+              executor: [gcp-gcr/default, ubuntu-2204-edge, windows-2019, windows-2022]
           context: cpe-gcp
           filters: *filters
 
