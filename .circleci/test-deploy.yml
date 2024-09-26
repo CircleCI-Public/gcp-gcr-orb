@@ -94,7 +94,6 @@ workflows:
 
       - integration-test-without-oidc-win:
           matrix:
-            alias: integration-test-without-oidc-win-alias
             parameters:
               executor: [windows-2019, windows-2022]
           context: cpe-gcp
@@ -146,7 +145,6 @@ workflows:
 
       - integration-test-with-oidc-win:
           matrix:
-            alias: integration-test-with-oidc-win-alias
             parameters:
               executor: [windows-2019, windows-2022]
           context: cpe-gcp
@@ -186,7 +184,7 @@ workflows:
             - build-and-push-with-env-var
             - integration-test-with-oidc-alias
             - build-and-push-with-oidc
-            - integration-test-without-oidc-win-alias
-            - integration-test-with-oidc-win-alias
+            - integration-test-without-oidc-win
+            - integration-test-with-oidc-win
           context: orb-publisher
           filters: *release-filters
