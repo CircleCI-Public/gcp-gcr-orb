@@ -42,6 +42,33 @@ jobs:
           source-tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
           target-tag: tagged.$CIRCLE_BUILD_NUMBER
 
+  integration-test-without-oidc-win:
+    parameters:
+      executor:
+        type: executor
+    executor: <<parameters.executor>>
+    steps:
+      # test orb commands
+      - checkout
+      - gcp-gcr/gcr-auth
+      - gcp-gcr/build-image:
+          registry-url: us.gcr.io
+          image: sample-image
+          tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
+          path: ~/project/sample/windows
+          docker-context: ~/project/sample/windows
+          extra_build_args: "--build-arg CIRCLE_BRANCH=$CIRCLE_BRANCH \
+            --build-arg CIRCLE_USERNAME=$CIRCLE_USERNAME"
+      - gcp-gcr/push-image:
+          registry-url: us.gcr.io
+          image: sample-image
+          tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
+      - gcp-gcr/tag-image:
+          registry-url: us.gcr.io
+          image: sample-image
+          source-tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
+          target-tag: tagged.$CIRCLE_BUILD_NUMBER
+
   integration-test-with-oidc:
     parameters:
       executor:
@@ -58,6 +85,32 @@ jobs:
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER.oidc
           path: ~/project/sample/linux
           docker-context: ~/project/sample/linux
+      - gcp-gcr/push-image:
+          registry-url: us.gcr.io
+          image: sample-image
+          tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER.oidc
+      - gcp-gcr/tag-image:
+          registry-url: us.gcr.io
+          image: sample-image
+          source-tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER.oidc
+          target-tag: tagged.$CIRCLE_BUILD_NUMBER.oidc
+
+  integration-test-with-oidc:
+    parameters:
+      executor:
+        type: executor
+    executor: <<parameters.executor>>
+    steps:
+      # test orb commands
+      - checkout
+      - gcp-gcr/gcr-auth:
+          use_oidc: true
+      - gcp-gcr/build-image:
+          registry-url: us.gcr.io
+          image: sample-image
+          tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER.oidc
+          path: ~/project/sample/windows
+          docker-context: ~/project/sample/windows
       - gcp-gcr/push-image:
           registry-url: us.gcr.io
           image: sample-image
