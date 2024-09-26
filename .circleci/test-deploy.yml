@@ -28,8 +28,8 @@ jobs:
           registry-url: us.gcr.io
           image: sample-image
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
-          path: ~/project/sample/
-          docker-context: ~/project/sample/
+          path: ~/project/sample/linux
+          docker-context: ~/project/sample/linux
           extra_build_args: "--build-arg CIRCLE_BRANCH=$CIRCLE_BRANCH \
             --build-arg CIRCLE_USERNAME=$CIRCLE_USERNAME"
       - gcp-gcr/push-image:
@@ -56,8 +56,8 @@ jobs:
           registry-url: us.gcr.io
           image: sample-image
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER.oidc
-          path: ~/project/sample/
-          docker-context: ~/project/sample/
+          path: ~/project/sample/linux
+          docker-context: ~/project/sample/linux
       - gcp-gcr/push-image:
           registry-url: us.gcr.io
           image: sample-image
@@ -88,7 +88,15 @@ workflows:
           matrix:
             alias: integration-test-without-oidc-alias
             parameters:
-              executor: [gcp-gcr/default, ubuntu-2204-edge, windows-2019, windows-2022]
+              executor: [gcp-gcr/default, ubuntu-2204-edge]
+          context: cpe-gcp
+          filters: *filters
+
+      - integration-test-without-oidc-win:
+          matrix:
+            alias: integration-test-without-oidc-win-alias
+            parameters:
+              executor: [windows-2019, windows-2022]
           context: cpe-gcp
           filters: *filters
 
@@ -99,8 +107,8 @@ workflows:
           image: sample-image
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
           digest-path: /tmp/digest.txt
-          path: ~/project/sample/
-          docker-context: ~/project/sample/
+          path: ~/project/sample/linux
+          docker-context: ~/project/sample/linux
           context: cpe-gcp
           filters: *filters
           requires:
@@ -117,8 +125,8 @@ workflows:
           image: ${CIRCLE_PROJECT_REPONAME}
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER
           digest-path: /tmp/digest.txt
-          path: ~/project/sample/
-          docker-context: ~/project/sample/
+          path: ~/project/sample/linux
+          docker-context: ~/project/sample/linux
           context: cpe-gcp
           filters: *filters
           requires:
@@ -132,7 +140,15 @@ workflows:
           matrix:
             alias: integration-test-with-oidc-alias
             parameters:
-              executor: [gcp-gcr/default, ubuntu-2204-edge, windows-2019, windows-2022]
+              executor: [gcp-gcr/default, ubuntu-2204-edge]
+          context: cpe-gcp
+          filters: *filters
+
+      - integration-test-with-oidc-win:
+          matrix:
+            alias: integration-test-with-oidc-win-alias
+            parameters:
+              executor: [windows-2019, windows-2022]
           context: cpe-gcp
           filters: *filters
 
@@ -143,8 +159,8 @@ workflows:
           image: sample-image
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUMBER.oidc
           digest-path: /tmp/digest.txt
-          path: ~/project/sample/
-          docker-context: ~/project/sample/
+          path: ~/project/sample/linux
+          docker-context: ~/project/sample/linux
           use_oidc: true
           context: cpe-gcp
           filters: *filters
@@ -170,5 +186,7 @@ workflows:
             - build-and-push-with-env-var
             - integration-test-with-oidc-alias
             - build-and-push-with-oidc
+            - integration-test-without-oidc-win-alias
+            - integration-test-with-oidc-win-alias
           context: orb-publisher
           filters: *release-filters
