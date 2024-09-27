@@ -1,5 +1,5 @@
 description: >
-  Configure Docker to use gcloud as a credential helper. Using this command requires the use of a 'machine' executor.
+  Configure Docker to use gcloud as a credential helper.
 
 parameters:
   gcloud-service-key:
