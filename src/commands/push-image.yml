@@ -5,14 +5,14 @@ parameters:
     description: The GCR registry URL from ['', us, eu, asia].gcr.io
     type: string
     default: gcr.io
-  
+
   repository:
     type: string
     default: ""
     description: >
       The Artifact Registry requires a HOST-NAME/PROJECT-ID/REPOSITORY/IMAGE format.
       If pushing to the Artifact Registry, the repository to push the image to
-      
+
   google-project-id:
     description: The Google project ID to connect with via the gcloud CLI
     type: env_var_name
