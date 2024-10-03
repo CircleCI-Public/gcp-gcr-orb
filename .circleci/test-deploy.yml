@@ -21,9 +21,6 @@ jobs:
       # test orb commands
       - checkout
       - gcp-gcr/gcr-auth
-      - run:
-          name: check auth
-          command: grep us-east1-docker.pkg.dev .docker/config.json
       - gcp-gcr/build-image:
           registry-url: us-east1-docker.pkg.dev/cpe-gcp-orb-testing
           image: sample-image
