@@ -19,6 +19,9 @@ fi
 # Set sudo to work whether logged in as root user or non-root user
 if [[ $EUID == 0 ]] || [[ "${platform}" == "windows" ]]; then export SUDO=""; else export SUDO="sudo"; fi
 
+# gcp-cli might have configured some registries already so getting rid of that
+rm  "$HOME/.docker/config.json"
+
 # configure Docker to use gcloud as a credential helper
 mkdir -p "$HOME/.docker"
 
