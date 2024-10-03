@@ -21,7 +21,7 @@ jobs:
       # test orb commands
       - checkout
       - gcp-gcr/gcr-auth
-        registry-url: us-east1-docker.pkg.dev
+          registry-url: us-east1-docker.pkg.dev
       - gcp-gcr/build-image:
           registry-url: us-east1-docker.pkg.dev
           image: sample-image
