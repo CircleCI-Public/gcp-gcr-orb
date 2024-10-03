@@ -24,7 +24,7 @@ jobs:
           registry-url: us-east1-docker.pkg.dev
       - gcp-gcr/build-image:
           registry-url: us-east1-docker.pkg.dev
-          image: sample-image
+          image: test-images/sample-image
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUM
           path: ~/project/sample/
           docker-context: ~/project/sample/
@@ -32,11 +32,11 @@ jobs:
             --build-arg CIRCLE_USERNAME=$CIRCLE_USERNAME"
       - gcp-gcr/push-image:
           registry-url: us-east1-docker.pkg.dev
-          image: sample-image
+          image: test-images/sample-image
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUM
       - gcp-gcr/tag-image:
           registry-url: us-east1-docker.pkg.dev
-          image: sample-image
+          image: test-images/sample-image
           source-tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUM
           target-tag: tagged.$CIRCLE_BUILD_NUM
   integration-test-with-oidc:
@@ -48,17 +48,17 @@ jobs:
           use_oidc: true
       - gcp-gcr/build-image:
           registry-url: us-east1-docker.pkg.dev
-          image: sample-image
+          image: test-images/sample-image
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUM.oidc
           path: ~/project/sample/
           docker-context: ~/project/sample/
       - gcp-gcr/push-image:
           registry-url: us-east1-docker.pkg.dev
-          image: sample-image
+          image: test-images/sample-image
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUM.oidc
       - gcp-gcr/tag-image:
           registry-url: us-east1-docker.pkg.dev
-          image: sample-image
+          image: test-images/sample-image
           source-tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUM.oidc
           target-tag: tagged.$CIRCLE_BUILD_NUM.oidc
 
@@ -71,7 +71,7 @@ workflows:
       - gcp-gcr/build-and-push-image:
           name: build-and-push-without-oidc
           registry-url: us-east1-docker.pkg.dev
-          image: sample-image
+          image: test-images/sample-image
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUM
           digest-path: /tmp/digest.txt
           path: ~/project/sample/
@@ -87,7 +87,7 @@ workflows:
       - gcp-gcr/build-and-push-image:
           name: build-and-push-with-env-var
           registry-url: us-east1-docker.pkg.dev
-          image: ${CIRCLE_PROJECT_REPONAME}
+          image: test-images/sample-image
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUM
           digest-path: /tmp/digest.txt
           path: ~/project/sample/
@@ -106,7 +106,7 @@ workflows:
       - gcp-gcr/build-and-push-image:
           name: build-and-push-with-oidc
           registry-url: us-east1-docker.pkg.dev
-          image: sample-image
+          image: test-images/sample-image
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUM.oidc
           digest-path: /tmp/digest.txt
           path: ~/project/sample/
