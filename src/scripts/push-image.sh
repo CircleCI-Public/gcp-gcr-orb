@@ -14,8 +14,8 @@ if [ -n "${ORB_VAL_REPOSITORY}" ]; then
 fi
 
 for tag_to_eval in "${DOCKER_TAGS[@]}"; do
-    TAG=$(eval echo "$tag_to_eval")
     set -x
+    TAG=$(eval echo "$tag_to_eval")
     docker push "$DOCKER_PATH"
     set +x
 done
