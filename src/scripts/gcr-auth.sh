@@ -22,7 +22,8 @@ if [[ $EUID == 0 ]] || [[ "${platform}" == "windows" ]]; then export SUDO=""; el
 # configure Docker to use gcloud as a credential helper
 mkdir -p "$HOME/.docker"
 
-if [[ "$ORB_VAL_REGISTRY_URL" == *"docker.pkg.dev" ]]; then
+ORB_VAL_REGISTRY_URL=$(echo "$ORB_VAL_REGISTRY_URL" | cut -d'/' -f1)
+if [[ "$ORB_VAL_REGISTRY_URL" == *"docker.pkg.dev"* ]]; then
     gcloud auth configure-docker --quiet --project "${!ORB_ENV_PROJECT_ID}" "$ORB_VAL_REGISTRY_URL"
 else
     gcloud auth configure-docker --quiet --project "${!ORB_ENV_PROJECT_ID}"
