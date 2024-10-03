@@ -37,4 +37,4 @@ if [[ -d "$HOME/.config" ]]; then
     $SUDO chown "$USER:$USER" "$HOME/.config" -R
 fi
 
-cat .docker/config.json
+cat "$HOME/.docker/config.json"
