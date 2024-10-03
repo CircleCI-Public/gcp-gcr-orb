@@ -23,6 +23,7 @@ if [[ $EUID == 0 ]] || [[ "${platform}" == "windows" ]]; then export SUDO=""; el
 mkdir -p "$HOME/.docker"
 
 ORB_VAL_REGISTRY_URL=$(echo "$ORB_VAL_REGISTRY_URL" | cut -d'/' -f1)
+echo "$ORB_VAL_REGISTRY_URL"
 if [[ "$ORB_VAL_REGISTRY_URL" == *"docker.pkg.dev"* ]]; then
     gcloud auth configure-docker --quiet --project "${!ORB_ENV_PROJECT_ID}" "$ORB_VAL_REGISTRY_URL"
 else
