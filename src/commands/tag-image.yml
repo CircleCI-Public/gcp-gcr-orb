@@ -11,6 +11,13 @@ parameters:
     type: env_var_name
     default: GOOGLE_PROJECT_ID
 
+  repository:
+    type: string
+    default: ""
+    description: >
+      The Artifact Registry requires a HOST-NAME/PROJECT-ID/REPOSITORY/IMAGE format.
+      If pushing to the Artifact Registry, the repository to push the image to
+
   image:
     type: string
     description: A Docker image name
