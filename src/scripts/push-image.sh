@@ -24,6 +24,6 @@ if [ -n "$ORB_VAL_DIGEST_PATH" ]; then
     mkdir -p "$(dirname "$ORB_VAL_DIGEST_PATH")"
     SAMPLE_FIRST=$(eval echo "${DOCKER_TAGS[0]}")
     set -x
-    docker image inspect --format="{{index .RepoDigests 0}}" "$ORB_VAL_REGISTRY_URL/$PROJECT_ID/$ORB_VAL_IMAGE:$SAMPLE_FIRST" > "$ORB_VAL_DIGEST_PATH"
+    docker image inspect --format="{{index .RepoDigests 0}}" "$DOCKER_PATH:$SAMPLE_FIRST" > "$ORB_VAL_DIGEST_PATH"
     set +x
 fi
