@@ -14,7 +14,7 @@ fi
 
 echo gcloud container images add-tag --quiet \
     "$IMAGE_ROOT:$SOURCE_TAG" \
-    "$IMAGE_ROOT:$TARGET_TAG"
+    "$IMAGE_ROOT:$TARGET_TAG" > ~/result.txt
 
 gcloud container images add-tag --quiet \
     "$IMAGE_ROOT:$SOURCE_TAG" \
