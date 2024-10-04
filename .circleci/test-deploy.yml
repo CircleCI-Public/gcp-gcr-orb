@@ -38,6 +38,7 @@ jobs:
           tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUM
       - gcp-gcr/tag-image:
           registry-url: us-east1-docker.pkg.dev
+          repository: test-images
           image: sample-image
           source-tag: ${CIRCLE_SHA1:0:7}.$CIRCLE_BUILD_NUM
           target-tag: tagged.$CIRCLE_BUILD_NUM
