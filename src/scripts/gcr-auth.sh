@@ -10,14 +10,12 @@ case "${unameOut}" in
     *)          platform="UNKNOWN:${unameOut}"
 esac
 
-if [ "${platform}" != "windows" ] && ! command -v sudo > /dev/null 2>&1; then
-  printf '%s\n' "sudo is required to configure Docker to use GCP repositories."
-  printf '%s\n' "Please install it and try again."
-  return 1
-fi
-
 # Set sudo to work whether logged in as root user or non-root user
-if [[ $EUID == 0 ]] || [[ "${platform}" == "windows" ]]; then export SUDO=""; else export SUDO="sudo"; fi
+if [[ $EUID == 0 ]] || [[ "${platform}" == "windows" ]]; then
+    export SUDO=""
+else
+    export SUDO="sudo"
+fi
 
 # configure Docker to use gcloud as a credential helper
 mkdir -p "$HOME/.docker"

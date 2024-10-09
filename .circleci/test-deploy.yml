@@ -15,6 +15,12 @@ release-filters: &release-filters
     only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
 
 jobs:
+  test-without-sudo:
+    docker:
+      - image: google/cloud-sdk:latest
+    steps:
+      - checkout
+      - gcp-gcr/gcr-auth
   integration-test-without-oidc:
     executor: gcp-gcr/default
     steps:
@@ -72,6 +78,15 @@ jobs:
 workflows:
   test-deploy:
     jobs:
+      - test-without-sudo:
+          context: cpe-gcp
+          filters: *filters
+          requires:
+            - integration-test-without-oidc
+          post-steps:
+            - run:
+                command: |
+                  gcloud version
       - integration-test-without-oidc:
           context: cpe-gcp
           filters: *filters
