@@ -81,8 +81,6 @@ workflows:
       - test-without-sudo:
           context: cpe-gcp
           filters: *filters
-          requires:
-            - integration-test-without-oidc
           post-steps:
             - run:
                 command: |
