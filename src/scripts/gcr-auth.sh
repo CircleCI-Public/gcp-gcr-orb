@@ -1,7 +1,21 @@
-#!/bin/bash 
+#!/usr/bin/env bash
+
+unameOut="$(uname -s)"
+case "${unameOut}" in
+    Linux*)     platform=linux;;
+    Darwin*)    platform=mac;;
+    CYGWIN*)    platform=windows;;
+    MINGW*)     platform=windows;;
+    MSYS_NT*)   platform=windows;;
+    *)          platform="UNKNOWN:${unameOut}"
+esac
 
 # Set sudo to work whether logged in as root user or non-root user
-if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
+if [[ $EUID == 0 ]] || [[ "${platform}" == "windows" ]]; then
+    export SUDO=""
+else
+    export SUDO="sudo"
+fi
 
 # configure Docker to use gcloud as a credential helper
 mkdir -p "$HOME/.docker"

@@ -53,11 +53,11 @@ parameters:
       Version of gcloud CLI to install.
 
   gcloud_components:
-      type: string
-      default: ""
-      description: >
-        The list of gcloud components to install. Space separated.
-        See https://cloud.google.com/sdk/docs/components for additional info.
+    type: string
+    default: ""
+    description: >
+      The list of gcloud components to install. Space separated.
+      See https://cloud.google.com/sdk/docs/components for additional info.
 
   # OIDC parameters
 
