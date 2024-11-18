@@ -107,7 +107,7 @@ parameters:
       Setup docker layer caching for optimized build. Not available if using the default executor.
     type: boolean
   remote-docker-version:
-    default: "17.09.0-ce"
+    default: "docker24"
     description: |
       Specify the remote docker version. See: https://circleci.com/docs/2.0/building-docker-images/#docker-version
     type: string
