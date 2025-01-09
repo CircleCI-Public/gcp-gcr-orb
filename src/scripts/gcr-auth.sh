@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+ORB_VAL_REGISTRY_URL="$(circleci env subst "$ORB_VAL_REGISTRY_URL")"
+
 unameOut="$(uname -s)"
 case "${unameOut}" in
     Linux*)     platform=linux;;
