@@ -1,4 +1,27 @@
-description: A debian-based machine executor
+description: >
+  A debian-based machine executor. Override `image` and `resource_class` to
+  use CircleCI Linux VM gen2 (for example `ubuntu-2204:current` and
+  `medium.gen2`). See https://circleci.com/docs/guides/execution-managed/using-linuxvm/
+
+parameters:
+  image:
+    type: string
+    default: default
+    description: >
+      Linux VM image for the machine executor. Keep `default` for existing
+      behavior, or set a gen2-compatible image such as `ubuntu-2204:current`.
+  resource_class:
+    type: string
+    default: medium
+    description: >
+      Resource class for the machine executor. Use a gen2 class such as
+      `medium.gen2` on CircleCI Cloud. Gen2 is not available on CircleCI Server.
+  docker_layer_caching:
+    type: boolean
+    default: false
+    description: Enable Docker Layer Caching on the machine executor.
 
 machine:
-  image: default
+  image: <<parameters.image>>
+  docker_layer_caching: <<parameters.docker_layer_caching>>
+resource_class: <<parameters.resource_class>>
