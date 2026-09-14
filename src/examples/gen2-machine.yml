@@ -1,0 +1,21 @@
+description: >
+  Log into Google Cloud Platform, then build and push an image to GCR using
+  the orb default machine executor on CircleCI Linux VM gen2.
+
+usage:
+  version: 2.1
+
+  orbs:
+    gcp-gcr: circleci/gcp-gcr@x.y.z
+
+  workflows:
+    build_and_push_image:
+      jobs:
+        - gcp-gcr/build-and-push-image:
+            context: myContext # your context containing gcloud login variables
+            registry-url: us.gcr.io # gcr.io, eu.gcr.io, asia.gcr.io
+            image: my-image # your image name
+            executor:
+              name: gcp-gcr/default
+              resource_class: medium.gen2
+              image: ubuntu-2204:current
